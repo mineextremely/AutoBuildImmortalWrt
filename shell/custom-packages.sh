@@ -43,6 +43,6 @@ CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-turboacc"
 # 集客AC
 #CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-gecoosac gecoosac"
 # EasyTier异地组网
-CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-theme-easytier"
+CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-easytier"
 # natpierce内网穿透工具
 CUSTOM_PACKAGES="$CUSTOM_PACKAGES natpierce"
