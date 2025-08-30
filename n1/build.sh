@@ -11,7 +11,7 @@ echo "Building for ROOTFS_PARTSIZE: $ROOTFS_PARTSIZE"
 # 输出调试信息
 echo "$(date '+%Y-%m-%d %H:%M:%S') - 开始构建arm64的rootfs.tar.gz"
 # 定义所需安装的包列表 下列插件你都可以自行删减
-PACKAGES="$PACKAGES kmod-usb-net-rtl8152-vendor"
+PACKAGES="$PACKAGES kmod-usb-net-rtl8152-vendor kmod-usb-net-rtl8152"
 PACKAGES="$PACKAGES curl fdisk"
 PACKAGES="$PACKAGES luci-i18n-diskman-zh-cn"
 PACKAGES="$PACKAGES luci-i18n-package-manager-zh-cn"
