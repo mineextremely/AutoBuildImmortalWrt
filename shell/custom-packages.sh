@@ -46,3 +46,5 @@ CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-turboacc"
 #CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-easytier"
 # natpierce内网穿透工具
 CUSTOM_PACKAGES="$CUSTOM_PACKAGES natpierce"
+# openclash-github-dev
+#CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-openclash"
