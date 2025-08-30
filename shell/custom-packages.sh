@@ -44,6 +44,10 @@ CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-turboacc"
 #CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-gecoosac gecoosac"
 # EasyTier异地组网
 #CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-easytier"
+# ZeroTier异地组网
+#CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-zerotier"
+# TailScale异地组网
+#CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-tailscale"
 # natpierce内网穿透工具
 CUSTOM_PACKAGES="$CUSTOM_PACKAGES natpierce"
 # openclash-github-dev
