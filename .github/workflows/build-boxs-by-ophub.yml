@@ -17,7 +17,7 @@ on:
       openwrt_board:
         description: "选择型号"
         required: false
-        default: "a311d-oes"
+        default: "wxy-oect"
         type: choice
         options:
           - a311d
@@ -208,7 +208,7 @@ on:
       builder_name:
         description: "设置打包作者的名称"
         required: true
-        default: 'wukongdaily'
+        default: 'MINEX'
 
 jobs:
   build:
