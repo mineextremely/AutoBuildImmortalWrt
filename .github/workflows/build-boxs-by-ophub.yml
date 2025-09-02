@@ -1,4 +1,5 @@
 name: Build boxs by ophub
+
 on:
   workflow_dispatch:
     inputs:
@@ -225,18 +226,18 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-        - name: Set ROOTFS inputs
-          id: set_rootfs
-          run: |
+      - name: Set ROOTFS inputs
+        id: set_rootfs
+        run: |
             echo "ROOTFS_URL=${{ github.event.inputs.rootfs_url }}" >> $GITHUB_ENV
             echo "ROOTFS_SHA256=${{ github.event.inputs.rootfs_sha256 }}" >> $GITHUB_ENV
 
-        - name: Download & verify custom rootfs
-          if: ${{ github.event.inputs.rootfs_url != '' }}
-          env:
+      - name: Download & verify custom rootfs
+        if: ${{ github.event.inputs.rootfs_url != '' }}
+        env:
             ROOTFS_URL: ${{ github.event.inputs.rootfs_url }}
             ROOTFS_SHA256: ${{ github.event.inputs.rootfs_sha256 }}
-          run: |
+        run: |
             set -eo pipefail
 
             echo "Custom rootfs requested: $ROOTFS_URL"
