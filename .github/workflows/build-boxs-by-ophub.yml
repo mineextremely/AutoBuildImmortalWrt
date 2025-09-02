@@ -188,7 +188,16 @@ on:
         required: false
         type: boolean
         default: true
-      skip_imagebuilder:
+      rootfs_url:
+        description: "可选：自定义 rootfs 的 URL（留空则使用默认流程）"
+        required: false
+        default: ""
+        type: string
+      rootfs_sha256:
+        description: "可选：提供 rootfs 的 SHA256（若提供则会校验，增强安全）"
+        required: false
+        default: ""
+        type: string
         description: "直接使用底包快速构建固件, 忽略自定义插件 ----（跳过 ImageBuilder）"
         required: false
         default: false
@@ -216,6 +225,54 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        - name: Set ROOTFS inputs
+          id: set_rootfs
+          run: |
+            echo "ROOTFS_URL=${{ github.event.inputs.rootfs_url }}" >> $GITHUB_ENV
+            echo "ROOTFS_SHA256=${{ github.event.inputs.rootfs_sha256 }}" >> $GITHUB_ENV
+
+        - name: Download & verify custom rootfs
+          if: ${{ github.event.inputs.rootfs_url != '' }}
+          env:
+            ROOTFS_URL: ${{ github.event.inputs.rootfs_url }}
+            ROOTFS_SHA256: ${{ github.event.inputs.rootfs_sha256 }}
+          run: |
+            set -eo pipefail
+
+            echo "Custom rootfs requested: $ROOTFS_URL"
+
+            mkdir -p workspace/rootfs
+            TMP_FILE=$(mktemp /tmp/rootfs.XXXXXX)
+            echo "Downloading to $TMP_FILE ..."
+
+            curl -fSL --connect-timeout 15 --max-time 600 "$ROOTFS_URL" -o "$TMP_FILE"
+
+            if [ -n "$ROOTFS_SHA256" ]; then
+              echo "$ROOTFS_SHA256  $TMP_FILE" > /tmp/expected.sha256
+              sha256sum -c /tmp/expected.sha256
+            else
+              echo "No SHA256 provided — skipping checksum verification (not recommended)."
+            fi
+
+            if file "$TMP_FILE" | grep -qi 'gzip'; then
+              tar -xzf "$TMP_FILE" -C workspace/rootfs
+              echo "Extracted tar.gz into workspace/rootfs"
+              exit 0
+            fi
+
+            if file "$TMP_FILE" | grep -qi 'Squashfs filesystem'; then
+              sudo apt-get update -y
+              sudo apt-get install -y squashfs-tools
+              mv "$TMP_FILE" workspace/rootfs/rootfs.squashfs
+              unsquashfs -f -d workspace/rootfs workspace/rootfs/rootfs.squashfs
+              echo "Extracted squashfs into workspace/rootfs"
+              exit 0
+            fi
+
+            tar -xvf "$TMP_FILE" -C workspace/rootfs || {
+              echo "Failed to extract rootfs: unknown format" >&2
+              exit 1
+            }
 
       - name: Set executable permissions
         run: chmod +x ${{ github.workspace }}/n1/build.sh
