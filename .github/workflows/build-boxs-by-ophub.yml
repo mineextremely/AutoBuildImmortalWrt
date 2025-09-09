@@ -201,6 +201,14 @@ on:
         required: false
         default: ""
         type: string
+      # 新增参数
+      custom_firmware_name:
+        description: |
+          当使用自定义 rootfs URL 时，可在此处设置固件名称前缀（替换 immortalwrt-24.10.2）
+          若留空，则使用默认名称。
+        required: false
+        default: ""
+        type: string
       replace_banner:
         description: '替换为ImmortalWrt的banner信息'
         required: false
@@ -328,7 +336,26 @@ jobs:
       - name: Rename .img.gz files
         id: rename
         run: |
-          MODEL=${{ inputs.openwrt_board }}
+          MODEL=${{ github.event.inputs.openwrt_board }}
+          # 检查是否使用了自定义 rootfs URL
+          CUSTOM_ROOTFS_URL="${{ github.event.inputs.custom_rootfs_url }}"
+          SKIP_IMAGEBUILDER=${{ github.event.inputs.skip_imagebuilder }}
+          
+          if [ -n "$CUSTOM_ROOTFS_URL" ] && [ "$SKIP_IMAGEBUILDER" = "true" ]; then
+            # 使用自定义 rootfs URL，检查是否有自定义固件名称
+            CUSTOM_NAME="${{ github.event.inputs.custom_firmware_name }}"
+            if [ -n "$CUSTOM_NAME" ]; then
+              PREFIX="$CUSTOM_NAME"
+              echo "✅ 使用自定义固件名称: $PREFIX"
+            else
+              PREFIX="immortalwrt-24.10.2"
+              echo "ℹ️ 使用默认固件名称"
+            fi
+          else
+            PREFIX="immortalwrt-24.10.2"
+            echo "ℹ️ 使用默认固件名称"
+          fi
+
           for FILE in ${{ env.PACKAGED_OUTPUTPATH }}/*.img.gz; do
             echo "Processing file: $FILE"
             FILENAME=$(basename "$FILE")
@@ -337,7 +364,7 @@ jobs:
               echo "Skipped: Could not extract kernel version from $FILENAME"
               continue
             fi
-            NEW_NAME="immortalwrt-24.10.2-$MODEL-btrfs-$KERNEL_VERSION.img.gz"
+            NEW_NAME="${PREFIX}-$MODEL-btrfs-$KERNEL_VERSION.img.gz"
             mv "$FILE" "${{ env.PACKAGED_OUTPUTPATH }}/$NEW_NAME"
             echo "Renamed to: $NEW_NAME"
           done
