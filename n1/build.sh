@@ -12,7 +12,7 @@ echo "Building for ROOTFS_PARTSIZE: $ROOTFS_PARTSIZE"
 echo "$(date '+%Y-%m-%d %H:%M:%S') - 开始构建arm64的rootfs.tar.gz"
 # 定义所需安装的包列表 下列插件你都可以自行删减
 PACKAGES=""
-PACKAGES="$PACKAGES curl fdisk"
+PACKAGES="$PACKAGES curl fdisk kmod-usb-net-rtl8152-vendor"
 PACKAGES="$PACKAGES luci-i18n-diskman-zh-cn"
 PACKAGES="$PACKAGES luci-i18n-package-manager-zh-cn"
 PACKAGES="$PACKAGES luci-i18n-firewall-zh-cn"
@@ -23,7 +23,7 @@ PACKAGES="$PACKAGES luci-theme-argon"
 #PACKAGES="$PACKAGES luci-i18n-argon-config-zh-cn"
 PACKAGES="$PACKAGES luci-i18n-ttyd-zh-cn"
 #PACKAGES="$PACKAGES luci-i18n-passwall-zh-cn"
-#PACKAGES="$PACKAGES luci-app-openclash"
+PACKAGES="$PACKAGES luci-app-openclash"
 #PACKAGES="$PACKAGES luci-i18n-homeproxy-zh-cn"
 PACKAGES="$PACKAGES openssh-sftp-server"
 #PACKAGES="$PACKAGES luci-i18n-samba4-zh-cn"
@@ -37,8 +37,8 @@ if [ "$INCLUDE_DOCKER" = "yes" ]; then
     echo "✅ 已选择docker : luci-i18n-dockerman-zh-cn"
 fi
 # 斐讯N1 无线
-PACKAGES="$PACKAGES kmod-brcmfmac wpad-basic-mbedtls iw iwinfo"
-PACKAGES="$PACKAGES perlbase-base perlbase-file perlbase-time perlbase-utf8 perlbase-xsloader"
+#PACKAGES="$PACKAGES kmod-brcmfmac wpad-basic-mbedtls iw iwinfo"
+#PACKAGES="$PACKAGES perlbase-base perlbase-file perlbase-time perlbase-utf8 perlbase-xsloader"
 # 晶晨宝盒（追加第三方必备软件 用于写入emmc 请不要注释）
 CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-amlogic luci-i18n-amlogic-zh-cn"
 
@@ -66,7 +66,7 @@ if echo "$PACKAGES" | grep -q "luci-app-openclash"; then
     echo "✅ 已选择 luci-app-openclash，添加 openclash core"
     mkdir -p files/etc/openclash/core
     # Download clash_meta
-    META_URL="https://raw.githubusercontent.com/vernesong/OpenClash/core/master/meta/clash-linux-arm64.tar.gz"
+    META_URL="https://raw.githubusercontent.com/vernesong/OpenClash/core/dev/smart/clash-linux-arm64.tar.gz"
     wget -qO- $META_URL | tar xOvz > files/etc/openclash/core/clash_meta
     chmod +x files/etc/openclash/core/clash_meta
     # Download GeoIP and GeoSite
