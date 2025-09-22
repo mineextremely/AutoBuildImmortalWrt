@@ -45,6 +45,6 @@ CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-turboacc"
 # 任务设置
 CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-taskplan luci-i18n-taskplan-zh-cn"
 # Easytier
-CUSTOM_PACKAGES="$CUSTOM_PACKAGES easytier luci-app-easytier luci-i18n-easytier-zh-cn"
+CUSTOM_PACKAGES="$CUSTOM_PACKAGES easytier luci-i18n-easytier-zh-cn"
 # floatip
-CUSTOM_PACKAGES="$CUSTOM_PACKAGES floatip luci-app-floatip luci-i18n-floatip-zh-cn"
+CUSTOM_PACKAGES="$CUSTOM_PACKAGES floatip luci-i18n-floatip-zh-cn"
