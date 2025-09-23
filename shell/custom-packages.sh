@@ -48,3 +48,5 @@ CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-turboacc"
 CUSTOM_PACKAGES="$CUSTOM_PACKAGES easytier luci-i18n-easytier-zh-cn"
 # floatip
 #CUSTOM_PACKAGES="$CUSTOM_PACKAGES floatip luci-i18n-floatip-zh-cn"
+# natpierce
+CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-natpierce"
