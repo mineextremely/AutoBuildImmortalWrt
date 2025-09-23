@@ -5,7 +5,7 @@ source shell/custom-packages.sh
 #echo "✅ 你选择了第三方软件包：$CUSTOM_PACKAGES"
 # 下载 run 文件仓库
 echo "🔄 正在同步第三方软件仓库 Cloning run file repo..."
-git clone --depth=1 https://github.com/wukongdaily/store.git /tmp/store-run-repo
+git clone --depth=1 https://github.com/mineextremely/store.git /tmp/store-run-repo
 
 # 拷贝 run/arm64 下所有 run 文件和ipk文件 到 extra-packages 目录
 mkdir -p /home/build/immortalwrt/extra-packages
@@ -45,21 +45,21 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') - Starting build process..."
 
 
 # 定义所需安装的包列表 下列插件你都可以自行删减
-PACKAGES=""
+PACKAGES="$packages kmod-usb-net-rndis"
 PACKAGES="$PACKAGES curl luci luci-i18n-base-zh-cn"
 PACKAGES="$PACKAGES luci-i18n-firewall-zh-cn"
-PACKAGES="$PACKAGES luci-theme-argon"
-PACKAGES="$PACKAGES luci-app-argon-config"
-PACKAGES="$PACKAGES luci-i18n-argon-config-zh-cn"
-PACKAGES="$PACKAGES luci-i18n-diskman-zh-cn"
+#PACKAGES="$PACKAGES luci-theme-argon"
+#PACKAGES="$PACKAGES luci-app-argon-config"
+#PACKAGES="$PACKAGES luci-i18n-argon-config-zh-cn"
+#PACKAGES="$PACKAGES luci-i18n-diskman-zh-cn"
 #24.10.0
 PACKAGES="$PACKAGES luci-i18n-package-manager-zh-cn"
 PACKAGES="$PACKAGES luci-i18n-ttyd-zh-cn"
 PACKAGES="$PACKAGES openssh-sftp-server"
 # 文件管理器
-PACKAGES="$PACKAGES luci-i18n-filemanager-zh-cn"
+#PACKAGES="$PACKAGES luci-i18n-filemanager-zh-cn"
 # 静态文件服务器dufs(推荐)
-PACKAGES="$PACKAGES luci-i18n-dufs-zh-cn"
+#PACKAGES="$PACKAGES luci-i18n-dufs-zh-cn"
 
 # 第三方软件包 合并
 # ======== shell/custom-packages.sh =======
