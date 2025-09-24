@@ -1,0 +1,50 @@
+# ===============================
+# Git 换行符 & 文件属性统一配置
+# 适配 OpenWrt 构建仓库
+# ===============================
+
+# --- GitHub Actions 流程文件（必须 LF） ---
+*.yml   text eol=lf
+*.yaml  text eol=lf
+
+# --- Linux 脚本/配置（必须 LF） ---
+*.sh    text eol=lf
+*.bash  text eol=lf
+*.py    text eol=lf
+*.mk    text eol=lf
+*.make  text eol=lf
+*.config text eol=lf
+*.conf  text eol=lf
+
+# --- 源码文件（通用保持 LF） ---
+*.c     text eol=lf
+*.h     text eol=lf
+*.cpp   text eol=lf
+*.cc    text eol=lf
+*.js    text eol=lf
+*.ts    text eol=lf
+*.json  text eol=lf
+*.md    text eol=lf
+
+# --- Windows 脚本（保持 CRLF） ---
+*.bat   text eol=crlf
+*.cmd   text eol=crlf
+*.ps1   text eol=crlf
+
+# --- 二进制文件（不做处理） ---
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.ico   binary
+*.zip   binary
+*.gz    binary
+*.bz2   binary
+*.xz    binary
+*.7z    binary
+*.bin   binary
+*.exe   binary
+*.dll   binary
+*.so    binary
+*.o     binary
+
