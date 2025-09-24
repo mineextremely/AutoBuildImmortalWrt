@@ -76,6 +76,19 @@ else
     echo "⚪️ 未选择 luci-app-openclash"
 fi
 
+# 若集成 luci-app-natpierce 则添加内核
+if echo "$PACKAGES" | grep -q "luci-app-natpierce"; then
+    echo "✅ 已选择 luci-app-natpierce，添加 natpierce core"
+    mkdir -p files/usr/share/natpierce
+    NATPIERCE_URL="https://natpierce.oss-cn-beijing.aliyuncs.com/linux/natpierce-arm64-v1.06.tar.gz"
+    echo "📥 下载 natpierce 内核..."
+    wget -qO- $NATPIERCE_URL | tar xz -C files/usr/share/natpierce/
+    # 确保可执行权限
+    chmod +x files/usr/share/natpierce/natpierce
+    echo "✅ natpierce 内核集成完成"
+else
+    echo "⚪️ 未选择 luci-app-natpierce"
+fi
 
 # 构建镜像
 echo "$(date '+%Y-%m-%d %H:%M:%S') - Building image with the following packages:"
