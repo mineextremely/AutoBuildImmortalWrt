@@ -18,13 +18,15 @@
 #CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-nekobox"
 # 同样是代理相关 但以下2个属于imm仓库内的软件 一般在build24.sh中已经集成 你也可以在此处调整它的去留 若去除组件则使用减号- 若添加则 不使用减号 或者 不处理
 CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-openclash"
+# 精简默认主题，非必要请勿启用
+CUSTOM_PACKAGES="$CUSTOM_PACKAGES -luci-theme-bootstrap"
 #CUSTOM_PACKAGES="$CUSTOM_PACKAGES -luci-i18n-homeproxy-zh-cn"
 # VPN
 #CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-tailscale luci-i18n-tailscale-zh-cn"
 # 分区扩容 by sirpdboy 
 #CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-partexp luci-i18n-partexp-zh-cn"
 # 酷猫主题 by sirpdboy 
-#CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-theme-kucat"
+CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-theme-kucat"
 # 进阶设置 by sirpdboy 
 # 当luci-app-advancedplus插件开启时 需排除冲突项 luci-app-argon-config和luci-i18n-argon-config-zh-cn 减号代表排除
 CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-advancedplus luci-i18n-advancedplus-zh-cn -luci-app-argon-config -luci-i18n-argon-config-zh-cn"
