@@ -333,7 +333,7 @@ jobs:
           kernel_usage: flippy
           builder_name: ${{ inputs.builder_name }}
 
-            - name: Rename .img.gz files
+      - name: Rename .img.gz files
         id: rename
         run: |
           MODEL=${{ github.event.inputs.openwrt_board }}
