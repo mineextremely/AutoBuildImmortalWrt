@@ -196,7 +196,7 @@ on:
       # 新增一个输入参数，用于自定义 rootfs 的 URL
       custom_rootfs_url:
         description: |
-          当‘跳过 ImageBuilder’为 true 时，可在此处填写自定义的 rootfs.tar.gz 文件 URL。
+          当'跳过 ImageBuilder'为 true 时，可在此处填写自定义的 rootfs.tar.gz 文件 URL。
           若留空，则使用默认地址。
         required: false
         default: ""
@@ -281,8 +281,8 @@ jobs:
               -e ROOTFS_PARTSIZE=$rootfs_partsize \
               immortalwrt/imagebuilder:armsr-armv8-openwrt-24.10.3 /bin/bash /home/build/immortalwrt/build.sh
           done
-          
-            - name: Download prebuilt rootfs.tar.gz (使用自定义或默认URL)
+
+      - name: Download prebuilt rootfs.tar.gz (使用自定义或默认URL)
         if: ${{ github.event.inputs.skip_imagebuilder == 'true' }}
         run: |
           echo "📦 正在下载预构建 rootfs"
@@ -326,12 +326,12 @@ jobs:
         uses: ophub/amlogic-s9xxx-openwrt@main
         with:
           openwrt_path: ${{ steps.find_rootfs.outputs.file }}
-          openwrt_board: ${{ inputs.openwrt_board }}
-          openwrt_kernel: ${{ inputs.openwrt_kernel }}
+          openwrt_board: ${{ github.event.inputs.openwrt_board }}
+          openwrt_kernel: ${{ github.event.inputs.openwrt_kernel }}
           auto_kernel: true
           kernel_repo: "ophub/kernel"
           kernel_usage: flippy
-          builder_name: ${{ inputs.builder_name }}
+          builder_name: ${{ github.event.inputs.builder_name }}
 
       - name: Rename .img.gz files
         id: rename
@@ -355,7 +355,7 @@ jobs:
             PREFIX="immortalwrt-24.10.3"
             echo "ℹ️ 使用默认固件名称"
           fi
-          
+
       - name: Upload firmware to GitHub Releases
         uses: softprops/action-gh-release@v2.2.1
         with:
