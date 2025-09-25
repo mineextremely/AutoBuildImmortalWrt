@@ -95,11 +95,27 @@ on:
         required: false
         type: boolean
         default: true
-      skip_imagebuilder:
+            skip_imagebuilder:
         description: "直接使用底包快速构建固件, 忽略自定义插件 ----（跳过 ImageBuilder）"
         required: false
         default: false
         type: boolean
+      # 新增一个输入参数，用于自定义 rootfs 的 URL
+      custom_rootfs_url:
+        description: |
+          当‘跳过 ImageBuilder’为 true 时，可在此处填写自定义的 rootfs.tar.gz 文件 URL。
+          若留空，则使用默认地址。
+        required: false
+        default: ""
+        type: string
+      # 新增参数
+      custom_firmware_name:
+        description: |
+          当使用自定义 rootfs URL 时，可在此处设置固件名称前缀（替换 immortalwrt-24.10.3）
+          若留空，则使用默认名称。
+        required: false
+        default: ""
+        type: string
       replace_banner:
         description: '替换为ImmortalWrt的banner信息'
         required: false
@@ -173,13 +189,34 @@ jobs:
               immortalwrt/imagebuilder:armsr-armv8-openwrt-24.10.3 /bin/bash /home/build/immortalwrt/build.sh
           done
           
-      - name: Download prebuilt rootfs.tar.gz
+      - name: Download prebuilt rootfs.tar.gz (使用自定义或默认URL)
         if: ${{ github.event.inputs.skip_imagebuilder == 'true' }}
         run: |
           echo "📦 正在下载预构建 rootfs"
           mkdir -p bin/targets/armsr/armv8
-          curl -L -o bin/targets/armsr/armv8/openwrt-armvirt-64-default-rootfs.tar.gz \
-            https://github.com/wukongdaily/AutoBuildImmortalWrt/releases/download/rootfs/immortalwrt-24.10.2-armsr-armv8-generic-rootfs.tar.gz
+          
+          # 判断是否提供了自定义 URL
+          CUSTOM_URL="${{ github.event.inputs.custom_rootfs_url }}"
+          if [ -n "$CUSTOM_URL" ]; then
+            echo "✅ 使用用户自定义的 rootfs URL: $CUSTOM_URL"
+            ROOTFS_URL="$CUSTOM_URL"
+          else
+            # 这是你原来的默认地址
+            DEFAULT_URL="https://github.com/wukongdaily/AutoBuildImmortalWrt/releases/download/rootfs/immortalwrt-24.10.2-armsr-armv8-generic-rootfs.tar.gz"
+            echo "ℹ️ 使用默认的 rootfs URL: $DEFAULT_URL"
+            ROOTFS_URL="$DEFAULT_URL"
+          fi
+          
+          # 使用 curl 下载文件，并指定输出路径和文件名
+          curl -L -o bin/targets/armsr/armv8/openwrt-armvirt-64-default-rootfs.tar.gz "$ROOTFS_URL"
+          
+          # 可选：检查下载是否成功
+          if [ $? -eq 0 ]; then
+            echo "✅ rootfs 下载成功"
+          else
+            echo "❌ rootfs 下载失败，请检查 URL 是否正确且可访问"
+            exit 1
+          fi
 
       - name: 查找rootfs.tar.gz所在路径
         id: find_rootfs
@@ -202,15 +239,28 @@ jobs:
           KERNEL_AUTO_LATEST: false
           WHOAMI: ${{ inputs.builder_name }}
 
-      - name: Rename .img.gz file
+      - name: Rename .img.gz files
         id: rename
         run: |
-          FILE=$(ls ${{ env.PACKAGED_OUTPUTPATH }}/*.img.gz | head -n1)
-          echo "Image file is: $FILE"
-          FILENAME=$(basename "$FILE")
-          echo "FILENAME=$FILENAME" >> $GITHUB_ENV
-          KERNEL_VERSION=$(echo "$FILENAME" | grep -oP 'k\d+\.\d+\.\d+')
-          mv "$FILE" "${{ env.PACKAGED_OUTPUTPATH }}/immortalwrt-24.10.2-phicomm-n1-btrfs-$KERNEL_VERSION.img.gz"
+          MODEL=${{ github.event.inputs.openwrt_board }}
+          # 检查是否使用了自定义 rootfs URL
+          CUSTOM_ROOTFS_URL="${{ github.event.inputs.custom_rootfs_url }}"
+          SKIP_IMAGEBUILDER=${{ github.event.inputs.skip_imagebuilder }}
+          
+          if [ -n "$CUSTOM_ROOTFS_URL" ] && [ "$SKIP_IMAGEBUILDER" = "true" ]; then
+            # 使用自定义 rootfs URL，检查是否有自定义固件名称
+            CUSTOM_NAME="${{ github.event.inputs.custom_firmware_name }}"
+            if [ -n "$CUSTOM_NAME" ]; then
+              PREFIX="$CUSTOM_NAME"
+              echo "✅ 使用自定义固件名称: $PREFIX"
+            else
+              PREFIX="immortalwrt-24.10.3"
+              echo "ℹ️ 使用默认固件名称"
+            fi
+          else
+            PREFIX="immortalwrt-24.10.2"
+            echo "ℹ️ 使用默认固件名称"
+          fi
 
 
       - name: Upload firmware to GitHub Releases

@@ -101,7 +101,7 @@ jobs:
         uses: softprops/action-gh-release@v2.2.1
         with:
           tag_name: QEMU
-          name: ImmortWrt-QEMU-armsr-armv8-24.10.2
+          name: QEMU-armsr-armv8-immortalwrt
           body_path: ${{ github.workspace }}/armsr-armv8/info.md
           files: |
             ${{ github.workspace }}/*.qcow2
