@@ -51,7 +51,7 @@ on:
       # 新增参数
       custom_firmware_name:
         description: |
-          当使用自定义 rootfs URL 时，可在此处设置固件名称前缀（替换 immortalwrt-24.10.2）
+          当使用自定义 rootfs URL 时，可在此处设置固件名称前缀（替换 immortalwrt-24.10.3）
           若留空，则使用默认名称。
         required: false
         default: ""
