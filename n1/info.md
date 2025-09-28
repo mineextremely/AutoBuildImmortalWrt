@@ -6,7 +6,7 @@
 #### 默认软件包大小 1GB
 #### 内核版本:根据用户选择
 #### 晶晨宝盒：✅ 自带 用于写入emmc （这一步等以后稳定再考虑写入 非必要不写入 其实用U盘很自由）
-#### 打包img 采用`onhub/amlogic-s9xxx-openwrt` 或 `flippy-openwrt-actions`
+#### 打包img 采用`ophub/amlogic-s9xxx-openwrt` 或 `flippy-openwrt-actions`
 
 
 ### 斐讯N1为单网口设备 网线接上路由器 启动后默认是自动获取ip的模式<br> 请在上级路由器的dhcp列表中查询具体的局域网ip

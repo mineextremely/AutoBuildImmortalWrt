@@ -203,6 +203,25 @@ jobs:
             echo "ℹ️ 使用默认固件名称"
           fi
 
+          # 实际重命名文件
+          OUTPUT_DIR="${{ env.PACKAGED_OUTPUTPATH }}"
+          echo "输出目录: $OUTPUT_DIR"
+          
+          # 查找所有.img.gz文件并重命名
+          for file in "$OUTPUT_DIR"/*.img.gz; do
+            if [ -f "$file" ]; then
+              # 获取原文件名
+              filename=$(basename "$file")
+              # 提取原文件名中第一个下划线之后的部分（保留板型、内核版本和日期信息）
+              suffix=${filename#*_}
+              # 构建新文件名
+              new_filename="${PREFIX}_${suffix}"
+              # 重命名文件
+              mv "$file" "$OUTPUT_DIR/$new_filename"
+              echo "✅ 重命名: $filename -> $new_filename"
+            fi
+          done
+
       - name: Upload firmware to GitHub Releases
         uses: softprops/action-gh-release@v2.2.1
         with:

@@ -5,14 +5,14 @@ on:
       openwrt_kernel:
         description: "选择构建的内核(斐讯N1)"
         required: false
-        default: "6.6.107"
+        default: "6.6.108"
         type: choice
         options:
           - 5.4.291
           - 5.10.235
           - 5.15.189
           - 6.1.153
-          - 6.6.107
+          - 6.6.108
           - 6.12.48
           
       include_docker:
@@ -164,7 +164,7 @@ jobs:
           echo "file=$ROOTFS_FILE" >> $GITHUB_OUTPUT
 
       - name: Package armsr-armv8 as ImmortalWrt for N1
-        uses: wukongdaily/flippy-openwrt-actions@master
+        uses: ophub/flippy-openwrt-actions@master
         if: ${{ steps.down.outputs.status }} == 'success' && !cancelled()
         env:
           OPENWRT_ARMVIRT: ${{ steps.find_rootfs.outputs.file }}
@@ -176,25 +176,49 @@ jobs:
       - name: Rename .img.gz files
         id: rename
         run: |
-          MODEL=${{ github.event.inputs.openwrt_board }}
           # 检查是否使用了自定义 rootfs URL
           CUSTOM_ROOTFS_URL="${{ github.event.inputs.custom_rootfs_url }}"
           SKIP_IMAGEBUILDER=${{ github.event.inputs.skip_imagebuilder }}
-          
+    
           if [ -n "$CUSTOM_ROOTFS_URL" ] && [ "$SKIP_IMAGEBUILDER" = "true" ]; then
             # 使用自定义 rootfs URL，检查是否有自定义固件名称
             CUSTOM_NAME="${{ github.event.inputs.custom_firmware_name }}"
             if [ -n "$CUSTOM_NAME" ]; then
-              PREFIX="$CUSTOM_NAME"
-              echo "✅ 使用自定义固件名称: $PREFIX"
-            else
-              PREFIX="immortalwrt-24.10.3"
-              echo "ℹ️ 使用默认固件名称"
-            fi
+            PREFIX="$CUSTOM_NAME"
+            echo "✅ 使用自定义固件名称: $PREFIX"
           else
             PREFIX="immortalwrt-24.10.3"
             echo "ℹ️ 使用默认固件名称"
           fi
+            else
+          PREFIX="immortalwrt-24.10.3"
+          echo "ℹ️ 使用默认固件名称"
+          fi
+
+          # 使用动作设置的输出目录
+          OUTPUT_DIR="/opt/openwrt_packit/output"
+          echo "输出目录: $OUTPUT_DIR"
+
+          # 等待文件生成
+          sleep 5
+
+          # 查找所有.img.gz文件并重命名
+          for file in "$OUTPUT_DIR"/*.img.gz; do
+            if [ -f "$file" ]; then
+              # 获取原文件名
+              filename=$(basename "$file")
+              # 提取原文件名中第一个下划线之后的部分
+              suffix=${filename#*_}
+              # 构建新文件名
+              new_filename="${PREFIX}_${suffix}"
+              # 重命名文件
+              mv "$file" "$OUTPUT_DIR/$new_filename"
+              echo "✅ 重命名: $filename -> $new_filename"
+            else
+              echo "⚠️ 未找到 .img.gz 文件"
+              ls -la "$OUTPUT_DIR"/
+            fi
+          done
 
 
       - name: Upload firmware to GitHub Releases
