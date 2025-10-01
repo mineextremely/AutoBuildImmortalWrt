@@ -1,0 +1,109 @@
+name: Build and Upload rootfs
+on:
+  workflow_dispatch:
+    inputs:
+      include_docker:
+        description: '是否编译 Docker 插件 (yes/no)'
+        required: true
+        default: 'no'
+        type: choice
+        options:
+          - 'yes'
+          - 'no'
+      enable_store:
+        description: "是否集成 iStore 商店 (true/false)"
+        required: false
+        type: boolean
+        default: true
+      replace_banner:
+        description: '是否替换为 ImmortalWrt 的 Banner 信息'
+        required: false
+        default: false
+        type: boolean
+      rootfs_partsize:
+        description: '根文件系统分区大小 (MB)'
+        required: true
+        default: "1024"
+        type: choice
+        options:
+          - '1024'
+
+jobs:
+  build_rootfs:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set executable permissions
+        run: chmod +x ${{ github.workspace }}/n1/build.sh
+
+      - name: Enable Store integration
+        if: ${{ github.event.inputs.enable_store == 'true' }}
+        run: |
+          echo 'CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-store"' >> shell/custom-packages.sh
+          echo "✅ 已追加 luci-app-store"
+
+      - name: Process banner replacement
+        if: ${{ github.event.inputs.replace_banner == 'true' }}
+        run: |
+          echo "✅ 已启用 Banner 替换"
+          cp n1/99-banner.sh files/etc/uci-defaults/
+      
+      - name: Build Rootfs with ImageBuilder (ImmortalWrt)
+        run: |
+          echo "✅ 使用 ImageBuilder 构建 rootfs"
+          docker run --rm -i \
+            --user root \
+            -v "${{ github.workspace }}/bin:/home/build/immortalwrt/bin" \
+            -v "${{ github.workspace }}/files/etc/uci-defaults:/home/build/immortalwrt/files/etc/uci-defaults" \
+            -v "${{ github.workspace }}/arch/arch.conf:/home/build/immortalwrt/files/etc/opkg/arch.conf" \
+            -v "${{ github.workspace }}/shell:/home/build/immortalwrt/shell" \
+            -v "${{ github.workspace }}/n1/banner:/home/build/immortalwrt/files/mnt/banner" \
+            -v "${{ github.workspace }}/n1/imm.config:/home/build/immortalwrt/.config" \
+            -v "${{ github.workspace }}/n1/build.sh:/home/build/immortalwrt/build.sh" \
+            -e PROFILE="generic" \
+            -e INCLUDE_DOCKER=${{ github.event.inputs.include_docker }} \
+            -e ROOTFS_PARTSIZE=${{ github.event.inputs.rootfs_partsize }} \
+            immortalwrt/imagebuilder:armsr-armv8-openwrt-24.10.3 /bin/bash /home/build/immortalwrt/build.sh
+
+      - name: Find and Rename rootfs with Timestamp
+        id: prepare_artifact
+        run: |
+          # 查找构建出的 rootfs 文件
+          ROOTFS_FILE=$(find bin/targets/armsr/armv8/ -type f -name "*rootfs.tar.gz" | head -n1)
+          
+          if [ ! -f "$ROOTFS_FILE" ]; then
+            echo "❌ 找不到构建的 rootfs.tar.gz 文件！"
+            exit 1
+          fi
+          echo "✅ 找到原始文件: $ROOTFS_FILE"
+
+          # 准备带时间戳的新文件名
+          TIMESTAMP=$(date +"%Y%m%d-%H%M")
+          DIR_PATH=$(dirname "$ROOTFS_FILE")
+          BASE_NAME=$(basename "$ROOTFS_FILE" .tar.gz)
+          NEW_FILENAME="${BASE_NAME}-${TIMESTAMP}.tar.gz"
+          NEW_PATH="${DIR_PATH}/${NEW_FILENAME}"
+          
+          # 重命名文件
+          mv "$ROOTFS_FILE" "$NEW_PATH"
+          echo "✅ 文件已重命名为: $NEW_FILENAME"
+          
+          # 将新路径设置为输出，供后续步骤使用
+          echo "artifact_path=${NEW_PATH}" >> $GITHUB_OUTPUT
+          echo "artifact_name=${NEW_FILENAME}" >> $GITHUB_OUTPUT
+
+      - name: Upload rootfs to GitHub Releases
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: "rootfs"
+          name: "ImmortalWrt Rootfs Builds"
+          body: |
+            自动构建的 rootfs 文件。
+            - **文件名**: `${{ steps.prepare_artifact.outputs.artifact_name }}`
+            - **构建时间**: `$(date -u)`
+          files: ${{ steps.prepare_artifact.outputs.artifact_path }}
+          # `prerelease: true` 如果您希望标记为预发布版本，可以取消注释
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
