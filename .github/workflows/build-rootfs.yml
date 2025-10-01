@@ -86,8 +86,8 @@ jobs:
           NEW_FILENAME="${BASE_NAME}-${TIMESTAMP}.tar.gz"
           NEW_PATH="${DIR_PATH}/${NEW_FILENAME}"
           
-          # 重命名文件
-          mv "$ROOTFS_FILE" "$NEW_PATH"
+          # 使用 sudo 重命名文件以解决权限问题
+          sudo mv "$ROOTFS_FILE" "$NEW_PATH"
           echo "✅ 文件已重命名为: $NEW_FILENAME"
           
           # 将新路径设置为输出，供后续步骤使用
