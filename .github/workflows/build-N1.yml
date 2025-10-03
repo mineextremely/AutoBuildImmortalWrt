@@ -5,14 +5,14 @@ on:
       openwrt_kernel:
         description: "选择构建的内核(斐讯N1)"
         required: false
-        default: "6.6.109"
+        default: "6.6.108"
         type: choice
         options:
           - 5.4.291
           - 5.10.235
           - 5.15.189
           - 6.1.153
-          - 6.6.109
+          - 6.6.108
           - 6.12.48
           
       include_docker:
