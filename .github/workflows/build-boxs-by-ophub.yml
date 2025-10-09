@@ -20,7 +20,9 @@ on:
         default: "wxy-oect"
         type: choice
         options:
+          - s905d-n1-thresh
           - wxy-oect
+          - s905d
       include_docker:
         description: |
           是否编译 Docker 插件
