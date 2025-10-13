@@ -13,7 +13,7 @@ CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-openclash"
 # 精简默认主题，非必要请勿启用
 #CUSTOM_PACKAGES="$CUSTOM_PACKAGES -luci-theme-bootstrap"
 # VPN
-#CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-tailscale luci-i18n-tailscale-zh-cn"
+CUSTOM_PACKAGES="$CUSTOM_PACKAGES tailscale luci-app-tailscale"
 # 分区扩容 by sirpdboy 
 #CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-partexp luci-i18n-partexp-zh-cn"
 # 酷猫主题 by sirpdboy 
@@ -30,7 +30,7 @@ CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-turboacc"
 # Easytier
 CUSTOM_PACKAGES="$CUSTOM_PACKAGES easytier luci-i18n-easytier-zh-cn"
 # floatip
-CUSTOM_PACKAGES="$CUSTOM_PACKAGES floatip luci-i18n-floatip-zh-cn"
+#CUSTOM_PACKAGES="$CUSTOM_PACKAGES floatip luci-i18n-floatip-zh-cn"
 # natpierce
 CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-natpierce"
 # DDNS-GO by sirpdboy 
