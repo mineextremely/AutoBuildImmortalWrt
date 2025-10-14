@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
     inputs:
       openwrt_kernel:
-        description: "选择构建的内核 当高版本内核没有时 系统会自动挑选匹配的内核。比如radxa e52c 即便你选择了6.1.y 可能最终构建还是5.10.160"
+        description: "选择构建的内核 当高版本内核没有时 系统会自动挑选匹配的内核。"
         required: false
         default: "6.1.y"
         type: choice
@@ -59,10 +59,13 @@ on:
         default: ""
         type: string
       replace_banner:
-        description: '替换为ImmortalWrt的banner信息'
+        description: '是否替换banner'
         required: false
-        default: false
-        type: boolean
+        default: '替换banner'
+        type: choice
+        options:
+          - '不替换banner'
+          - '替换banner'
       rootfs_partsize:
         description: '软件包大小1G固定'
         required: true
@@ -98,10 +101,11 @@ jobs:
           fi
 
       - name: 处理是否替换 banner 信息
-        if: ${{ github.event.inputs.skip_imagebuilder == 'false' && github.event.inputs.replace_banner == 'true' }}
+        # 修改条件判断
+        if: ${{ github.event.inputs.skip_imagebuilder == 'false' && github.event.inputs.replace_banner == '替换banner' }}
         run: |
-          # 使用ImageBuilder构建 且用户勾选了替换banner时
-          cp n1/99-banner.sh files/etc/uci-defaults/
+          cp banner/99-banner.sh files/etc/uci-defaults/
+          echo "✅ 已替换 banner 信息"
       
       - name: Build Rootfs for Radxa and Other Boards (ImmortalWrt)
         if: ${{ github.event.inputs.skip_imagebuilder != 'true' }}

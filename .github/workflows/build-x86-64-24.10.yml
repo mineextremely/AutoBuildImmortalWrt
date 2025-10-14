@@ -39,6 +39,14 @@ on:
       pppoe_password:
         description: "宽带密码 (若启用PPPoE)"
         required: false
+      replace_banner:
+        description: '是否替换banner'
+        required: false
+        default: '替换banner'
+        type: choice
+        options:
+          - '不替换banner'
+          - '替换banner'
 
 jobs:
   build:
@@ -76,6 +84,12 @@ jobs:
             echo "❎ 未启用 luci-app-store"
           fi
 
+      - name: 处理是否替换 banner 信息
+        if: ${{ github.event.inputs.replace_banner == '替换banner' }}
+        run: |
+          cp banner/99-banner.sh files/etc/uci-defaults/
+          echo "✅ 已替换 banner 信息"
+
       - name: Build ImmortalWrt-x86-64-efi
         run: |
           profile="${{ github.event.inputs.profile }}"
@@ -89,6 +103,7 @@ jobs:
             -v "${{ github.workspace }}/x86-64/imm.config:/home/build/immortalwrt/.config" \
             -v "${{ github.workspace }}/shell:/home/build/immortalwrt/shell" \
             -v "${{ github.workspace }}/x86-64/build24.sh:/home/build/immortalwrt/build.sh" \
+            -v "${{ github.workspace }}/x86-64/banner:/home/build/immortalwrt/files/mnt/banner" \
             -e PROFILE=$profile \
             -e INCLUDE_DOCKER=$include_docker \
             -e ENABLE_PPPOE=${{ inputs.enable_pppoe }} \
