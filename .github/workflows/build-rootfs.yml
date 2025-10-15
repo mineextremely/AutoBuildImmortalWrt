@@ -20,11 +20,6 @@ on:
         options:
           - 'yes'
           - 'no'
-      enable_store:
-        description: "是否集成 iStore 商店 (true/false)"
-        required: false
-        type: boolean
-        default: true
       replace_banner:
         description: '是否替换banner'
         required: false
@@ -50,12 +45,6 @@ jobs:
 
       - name: Set executable permissions
         run: chmod +x ${{ github.workspace }}/n1/build.sh
-
-      - name: Enable Store integration
-        if: ${{ github.event.inputs.enable_store == 'true' }}
-        run: |
-          echo 'CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-store"' >> shell/custom-packages.sh
-          echo "✅ 已追加 luci-app-store"
 
       - name: Process banner replacement
         # 修改条件判断
