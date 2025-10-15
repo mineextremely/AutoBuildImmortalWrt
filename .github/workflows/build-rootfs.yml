@@ -2,6 +2,16 @@ name: Build and Upload rootfs
 on:
   workflow_dispatch:
     inputs:
+      luci_version:
+        description: "选择luci版本"
+        required: false
+        default: "24.10.3"
+        type: choice
+        options:
+          - 24.10.0
+          - 24.10.1
+          - 24.10.2
+          - 24.10.3
       include_docker:
         description: '是否编译 Docker 插件 (yes/no)'
         required: true
@@ -57,6 +67,7 @@ jobs:
       - name: Build Rootfs with ImageBuilder (ImmortalWrt)
         run: |
           echo "✅ 使用 ImageBuilder 构建 rootfs"
+          luci_version="${{ github.event.inputs.luci_version }}"
           docker run --rm -i \
             --user root \
             -v "${{ github.workspace }}/bin:/home/build/immortalwrt/bin" \
@@ -69,9 +80,9 @@ jobs:
             -e PROFILE="generic" \
             -e INCLUDE_DOCKER=${{ github.event.inputs.include_docker }} \
             -e ROOTFS_PARTSIZE=${{ github.event.inputs.rootfs_partsize }} \
-            immortalwrt/imagebuilder:armsr-armv8-openwrt-24.10.3 /bin/bash /home/build/immortalwrt/build.sh
+            immortalwrt/imagebuilder:armsr-armv8-openwrt-${luci_version} /bin/bash /home/build/immortalwrt/build.sh
 
-      - name: Find and Rename rootfs with Timestamp
+      - name: Find and Rename rootfs with Version and Timestamp
         id: prepare_artifact
         run: |
           # 查找构建出的 rootfs 文件
@@ -83,11 +94,14 @@ jobs:
           fi
           echo "✅ 找到原始文件: $ROOTFS_FILE"
 
-          # 准备带时间戳的新文件名
+          # 准备带版本和时间戳的新文件名
+          LUCI_VERSION="${{ github.event.inputs.luci_version }}"
           TIMESTAMP=$(date +"%Y%m%d-%H%M")
           DIR_PATH=$(dirname "$ROOTFS_FILE")
           BASE_NAME=$(basename "$ROOTFS_FILE" .tar.gz)
-          NEW_FILENAME="${BASE_NAME}-${TIMESTAMP}.tar.gz"
+          # 移除原始文件名中的版本信息，使用用户选择的版本
+          CLEAN_BASE_NAME=$(echo "$BASE_NAME" | sed 's/immortalwrt-[0-9.]*-//' | sed 's/-rootfs//')
+          NEW_FILENAME="immortalwrt-${LUCI_VERSION}-${CLEAN_BASE_NAME}-rootfs-${TIMESTAMP}.tar.gz"
           NEW_PATH="${DIR_PATH}/${NEW_FILENAME}"
           
           # 使用 sudo 重命名文件以解决权限问题
@@ -101,12 +115,15 @@ jobs:
       - name: Upload rootfs to GitHub Releases
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: "rootfs"
-          name: "ImmortalWrt Rootfs Builds"
+          tag_name: "rootfs-${{ github.event.inputs.luci_version }}"
+          name: "ImmortalWrt Rootfs Builds - ${{ github.event.inputs.luci_version }}"
           body: |
             自动构建的 rootfs 文件。
+            - **Luci版本**: `${{ github.event.inputs.luci_version }}`
             - **文件名**: `${{ steps.prepare_artifact.outputs.artifact_name }}`
             - **构建时间**: `$(date -u)`
+            - **Docker支持**: `${{ github.event.inputs.include_docker }}`
+            - **iStore支持**: `${{ github.event.inputs.enable_store }}`
           files: ${{ steps.prepare_artifact.outputs.artifact_path }}
           # `prerelease: true` 如果您希望标记为预发布版本，可以取消注释
         env:
