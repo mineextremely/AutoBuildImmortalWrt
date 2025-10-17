@@ -13,8 +13,8 @@ CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-store"
 CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-openclash"
 # 精简默认主题，非必要请勿启用
 #CUSTOM_PACKAGES="$CUSTOM_PACKAGES -luci-theme-bootstrap"
-# VPN
-CUSTOM_PACKAGES="$CUSTOM_PACKAGES tailscale luci-app-tailscale"
+# tailscale
+#CUSTOM_PACKAGES="$CUSTOM_PACKAGES tailscale luci-app-tailscale"
 # 分区扩容 by sirpdboy 
 #CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-partexp luci-i18n-partexp-zh-cn"
 # 酷猫主题 by sirpdboy 
