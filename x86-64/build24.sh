@@ -93,7 +93,7 @@ fi
 if echo "$PACKAGES" | grep -q "luci-app-natpierce"; then
     echo "✅ 已选择 luci-app-natpierce，添加 natpierce core"
     mkdir -p files/usr/share/natpierce
-    NATPIERCE_URL="https://natpierce.oss-cn-beijing.aliyuncs.com/linux/natpierce-arm64-v1.06.tar.gz"
+    NATPIERCE_URL="https://natpierce.oss-cn-beijing.aliyuncs.com/linux/natpierce-amd64-v1.06.tar.gz"
     echo "📥 下载 natpierce 内核..."
     wget -qO- $NATPIERCE_URL | tar xz -C files/usr/share/natpierce/
     # 确保可执行权限
