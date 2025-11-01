@@ -111,7 +111,7 @@ jobs:
           cp banner/99-banner.sh files/etc/uci-defaults/
           echo "✅ 已替换 banner 信息"
 
-      - name: Build Wireless ImmortalWrt 24.10.3
+      - name: Build Wireless ImmortalWrt 24.10
         run: |
           profile="${{ github.event.inputs.profile }}"
           echo "Building for profile: $profile"
