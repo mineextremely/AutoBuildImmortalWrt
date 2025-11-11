@@ -29,13 +29,13 @@
 #CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-theme-kucat"
 # 进阶设置 by sirpdboy 
 # 当luci-app-advancedplus插件开启时 需排除冲突项 luci-app-argon-config和luci-i18n-argon-config-zh-cn 减号代表排除
-#CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-advancedplus luci-i18n-advancedplus-zh-cn -luci-app-argon-config -luci-i18n-argon-config-zh-cn"
+CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-advancedplus luci-i18n-advancedplus-zh-cn -luci-app-argon-config -luci-i18n-argon-config-zh-cn"
 # 网络测速 by sirpdboy 
 #CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-netspeedtest luci-i18n-netspeedtest-zh-cn"
 # MosDNS
 #CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-mosdns luci-i18n-mosdns-zh-cn"
 # Turbo ACC 网络加速
-#CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-turboacc"
+CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-turboacc"
 # 应用过滤 openappfilter.com
 #CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-appfilter luci-i18n-appfilter-zh-cn"
 # 设置向导 by sirpdboy
@@ -47,6 +47,6 @@
 # 任务设置
 #CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-taskplan luci-i18n-taskplan-zh-cn"
 # Easytier
-#CUSTOM_PACKAGES="$CUSTOM_PACKAGES easytier luci-app-easytier"
+CUSTOM_PACKAGES="$CUSTOM_PACKAGES easytier luci-app-easytier"
 # 统一文件共享
 #CUSTOM_PACKAGES="$CUSTOM_PACKAGES webdav2 luci-app-unishare"
