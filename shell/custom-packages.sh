@@ -10,7 +10,7 @@ CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-store"
 # 首页和网络向导
 #CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-i18n-quickstart-zh-cn"
 # 同样是代理相关 但以下2个属于imm仓库内的软件 一般在build24.sh中已经集成 你也可以在此处调整它的去留 若去除组件则使用减号- 若添加则 不使用减号 或者 不处理
-CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-openclash"
+#CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-openclash"
 # 精简默认主题，非必要请勿启用
 #CUSTOM_PACKAGES="$CUSTOM_PACKAGES -luci-theme-bootstrap"
 # tailscale
@@ -33,6 +33,6 @@ CUSTOM_PACKAGES="$CUSTOM_PACKAGES easytier luci-i18n-easytier-zh-cn"
 # floatip
 #CUSTOM_PACKAGES="$CUSTOM_PACKAGES floatip luci-i18n-floatip-zh-cn"
 # natpierce
-CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-natpierce"
+#CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-natpierce"
 # DDNS-GO by sirpdboy 
 #CUSTOM_PACKAGES="$CUSTOM_PACKAGES ddns-go luci-i18n-ddns-go-zh-cn"
