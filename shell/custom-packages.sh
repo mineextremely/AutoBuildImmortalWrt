@@ -13,28 +13,30 @@ CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-store"
 CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-openclash"
 # 精简默认主题，非必要请勿启用
 CUSTOM_PACKAGES="$CUSTOM_PACKAGES -luci-theme-bootstrap"
-# tailscale
-#CUSTOM_PACKAGES="$CUSTOM_PACKAGES tailscale luci-app-tailscale"
+# DDNS-GO by sirpdboy 
+#CUSTOM_PACKAGES="$CUSTOM_PACKAGES ddns-go luci-i18n-ddns-go-zh-cn"
+# 设置向导 by sirpdboy
+#CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-netwizard luci-i18n-netwizard-zh-cn"
+# 任务设置
+#CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-taskplan luci-i18n-taskplan-zh-cn"
 # 分区扩容 by sirpdboy 
 #CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-partexp luci-i18n-partexp-zh-cn"
 # 酷猫主题 by sirpdboy 
-CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-theme-kucat"
+#CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-theme-kucat"
 # 酷猫主题设置 by sirpdboy 
-CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-i18n-kucat-config-zh-cn"
+#CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-i18n-kucat-config-zh-cn"
+# Aurora by eamonxg
+CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-theme-aurora"
 # 进阶设置 by sirpdboy 
 # 当luci-app-advancedplus插件开启时 需排除冲突项 luci-app-argon-config和luci-i18n-argon-config-zh-cn 减号代表排除
 CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-advancedplus luci-i18n-advancedplus-zh-cn -luci-app-argon-config -luci-i18n-argon-config-zh-cn"
 # Turbo ACC 网络加速
 CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-turboacc"
-# 设置向导 by sirpdboy
-#CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-netwizard luci-i18n-netwizard-zh-cn"
-# 任务设置
-#CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-taskplan luci-i18n-taskplan-zh-cn"
 # Easytier
-#CUSTOM_PACKAGES="$CUSTOM_PACKAGES easytier luci-i18n-easytier-zh-cn"
+CUSTOM_PACKAGES="$CUSTOM_PACKAGES easytier luci-i18n-easytier-zh-cn"
+# tailscale
+#CUSTOM_PACKAGES="$CUSTOM_PACKAGES tailscale luci-app-tailscale"
 # floatip
 #CUSTOM_PACKAGES="$CUSTOM_PACKAGES floatip luci-i18n-floatip-zh-cn"
 # natpierce
-CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-natpierce"
-# DDNS-GO by sirpdboy 
-#CUSTOM_PACKAGES="$CUSTOM_PACKAGES ddns-go luci-i18n-ddns-go-zh-cn"
+#CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-natpierce"
