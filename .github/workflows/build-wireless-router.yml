@@ -38,6 +38,9 @@ on:
         options:
           - cmcc_rax3000m
           - xiaomi_mi-router-3g
+          - xiaomi_mi-router-cr6606
+          - xiaomi_mi-router-cr6608
+          - xiaomi_mi-router-cr6609
         default: cmcc_rax3000m
       custom_router_ip:
         description: "请设置路由器的管理地址 格式:192.168.x.1 或 10.x.x.1"
