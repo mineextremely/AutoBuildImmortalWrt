@@ -43,4 +43,4 @@ CUSTOM_PACKAGES="$CUSTOM_PACKAGES floatip luci-i18n-floatip-zh-cn"
 # 高级卸载 by YT Vedio Talk
 CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-uninstall"
 # EasyMesh by github@torguardvpn
-CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-easymesh"
+#CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-easymesh"
