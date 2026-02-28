@@ -517,6 +517,11 @@ on:
       pppoe_password:
         description: "宽带密码 (若启用PPPoE)"
         required: false
+      replace_banner:
+        description: '替换为自定义banner'
+        required: false
+        default: false
+        type: boolean
 
 
 jobs:
@@ -555,6 +560,19 @@ jobs:
             echo "✅ 已追加 luci-app-store"
           else
             echo "❎ 未启用 luci-app-store"
+          fi
+
+      - name: 处理是否替换 banner 信息
+        if: ${{ github.event.inputs.replace_banner == 'true' }}
+        run: |
+          # 检查 banner/mediatek-filogic 目录下是否存在自定义 banner 文件
+          if [ -f "banner/mediatek-filogic/banner" ]; then
+            echo "✅ 找到 MediaTek Filogic 自定义 banner 文件"
+            # 复制统一的 banner 替换脚本
+            cp banner/99-banner.sh files/etc/uci-defaults/
+            chmod +x files/etc/uci-defaults/99-banner.sh
+          else
+            echo "⚠️ 未找到 banner/mediatek-filogic/banner，跳过 banner 替换"
           fi
 
 
@@ -642,6 +660,7 @@ jobs:
               -v "${{ github.workspace }}/arch/arch.conf:/home/build/immortalwrt/files/etc/opkg/arch.conf" \
               -v "${{ github.workspace }}/shell:/home/build/immortalwrt/shell" \
               -v "${{ github.workspace }}/mediatek-filogic/build24.sh:/home/build/immortalwrt/build.sh" \
+              -v "${{ github.workspace }}/banner/mediatek-filogic/banner:/home/build/immortalwrt/files/mnt/banner" \
               -e PROFILE=$profile \
               -e INCLUDE_DOCKER=$include_docker \
               -e ENABLE_PPPOE=${{ inputs.enable_pppoe }} \
