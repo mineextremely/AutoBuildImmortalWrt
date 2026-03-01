@@ -28,7 +28,7 @@ if [ -z "$CUSTOM_PACKAGES" ]; then
 else
   # 下载 run 文件仓库
   echo "🔄 正在同步第三方软件仓库 Cloning run file repo..."
-  git clone --depth=1 https://github.com/wukongdaily/store.git /tmp/store-run-repo
+  git clone --depth=1 https://github.com/mineextremely/store.git /tmp/store-run-repo
 
   # 拷贝 run/arm64 下所有 run 文件和ipk文件 到 extra-packages 目录
   mkdir -p /home/build/immortalwrt/extra-packages
@@ -60,10 +60,10 @@ PACKAGES="$PACKAGES luci-theme-argon"
 PACKAGES="$PACKAGES luci-app-argon-config"
 PACKAGES="$PACKAGES luci-i18n-argon-config-zh-cn"
 PACKAGES="$PACKAGES luci-i18n-ttyd-zh-cn"
-PACKAGES="$PACKAGES luci-i18n-homeproxy-zh-cn"
+#PACKAGES="$PACKAGES luci-i18n-homeproxy-zh-cn"
 PACKAGES="$PACKAGES openssh-sftp-server"
 # 代理工具
-PACKAGES="$PACKAGES luci-i18n-passwall-zh-cn"
+#PACKAGES="$PACKAGES luci-i18n-passwall-zh-cn"
 PACKAGES="$PACKAGES luci-app-openclash"
 # 判断是否需要编译 Docker 插件
 if [ "$INCLUDE_DOCKER" = "yes" ]; then
@@ -81,12 +81,9 @@ if echo "$PACKAGES" | grep -q "luci-app-openclash"; then
     echo "✅ 已选择 luci-app-openclash，添加 openclash core"
     mkdir -p files/etc/openclash/core
     # Download clash_meta
-    META_URL="https://raw.githubusercontent.com/vernesong/OpenClash/core/master/meta/clash-linux-arm64.tar.gz"
+    META_URL="https://raw.githubusercontent.com/vernesong/OpenClash/core/dev/smart/clash-linux-arm64.tar.gz"
     wget -qO- $META_URL | tar xOvz > files/etc/openclash/core/clash_meta
     chmod +x files/etc/openclash/core/clash_meta
-    # Download GeoIP and GeoSite
-    wget -q https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geoip.dat -O files/etc/openclash/GeoIP.dat
-    wget -q https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat -O files/etc/openclash/GeoSite.dat
 else
     echo "⚪️ 未选择 luci-app-openclash"
 fi
