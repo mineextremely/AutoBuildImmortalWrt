@@ -41,7 +41,10 @@ PACKAGES="$PACKAGES luci-i18n-package-manager-zh-cn"
 PACKAGES="$PACKAGES luci-i18n-firewall-zh-cn"
 PACKAGES="$PACKAGES luci-theme-argon"
 PACKAGES="$PACKAGES luci-i18n-ttyd-zh-cn"
+#USB网卡 mt7921AU的相关依赖
 PACKAGES="$PACKAGES kmod-mt7921u iw-full iwinfo wpad-basic-mbedtls"
+
+PACKAGES="$PACKAGES luci-app-openclash kmod-nft-tproxy"
 PACKAGES="$PACKAGES luci-app-openclash kmod-nft-tproxy"
 PACKAGES="$PACKAGES luci-i18n-filemanager-zh-cn"
 # 判断是否需要编译 Docker 插件
