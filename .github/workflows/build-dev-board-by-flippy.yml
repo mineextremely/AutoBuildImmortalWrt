@@ -150,10 +150,12 @@ jobs:
           DEFAULT_ROOTFS_URL="https://github.com/wukongdaily/AutoBuildImmortalWrt/releases/download/rootfs/immortalwrt-24.10.2-armsr-armv8-generic-rootfs.tar.gz"
           if [ -n "$CUSTOM_ROOTFS_URL" ]; then
             ROOTFS_URL="$CUSTOM_ROOTFS_URL"
-            echo "PREBUILT_LUCI_VERSION=${{ github.event.inputs.luci_version }}" >> $GITHUB_ENV
+            echo "PREBUILT_NAME_PREFIX=custom-wrt" >> $GITHUB_ENV
+            echo "PREBUILT_LUCI_VERSION=unknown" >> $GITHUB_ENV
             echo "Using custom rootfs URL: $ROOTFS_URL"
           else
             ROOTFS_URL="$DEFAULT_ROOTFS_URL"
+            echo "PREBUILT_NAME_PREFIX=immortalwrt" >> $GITHUB_ENV
             echo "PREBUILT_LUCI_VERSION=24.10.2" >> $GITHUB_ENV
             echo "Using default rootfs URL: $ROOTFS_URL"
           fi
@@ -195,7 +197,7 @@ jobs:
           MODEL=${{ inputs.openwrt_soc }}
           if [ -n "$PREBUILT_LUCI_VERSION" ]; then
               echo "PREBUILT_LUCI_VERSION is not empty: $PREBUILT_LUCI_VERSION"
-              mv "$FILE" "${{ env.PACKAGED_OUTPUTPATH }}/immortalwrt-$PREBUILT_LUCI_VERSION-$MODEL-btrfs-$KERNEL_VERSION.img.gz"
+              mv "$FILE" "${{ env.PACKAGED_OUTPUTPATH }}/$PREBUILT_NAME_PREFIX-$PREBUILT_LUCI_VERSION-$MODEL-btrfs-$KERNEL_VERSION.img.gz"
           else
               LUCI_VERSION="${{ github.event.inputs.luci_version }}"
               mv "$FILE" "${{ env.PACKAGED_OUTPUTPATH }}/immortalwrt-$LUCI_VERSION-$MODEL-btrfs-$KERNEL_VERSION.img.gz"
