@@ -1,19 +1,12 @@
-name: Build-ophub-boxs-24.10.x
+name: Build-ophub-boxs-25.12.x
 on:
   workflow_dispatch:
     inputs:
       luci_version:
-        description: "选择luci版本"
-        required: false
-        default: "24.10.5"
-        type: choice
-        options:
-          - 24.10.0
-          - 24.10.1
-          - 24.10.2
-          - 24.10.3
-          - 24.10.4
-          - 24.10.5
+        description: "填写 25.12.x 实验版 ImageBuilder 标签，例如 25.12.0-rc1"
+        required: true
+        default: "25.12.0-rc1"
+        type: string
       openwrt_kernel:
         description: "选择构建的内核 当高版本内核没有时 系统会自动挑选匹配的内核。比如radxa e52c 即便你选择了6.1.y 可能最终构建还是5.10.160"
         required: false
@@ -188,25 +181,20 @@ on:
           - zysj
       include_docker:
         description: |
-          是否编译 Docker 插件
+          是否编译 Docker 官方插件
         required: true
         default: 'no'
         type: choice
         options:
           - 'yes'
           - 'no'
-      enable_store:
-        description: "集成 store 商店"
-        required: false
-        type: boolean
-        default: true
       skip_imagebuilder:
-        description: "直接使用底包快速构建固件, 忽略自定义插件 ----（跳过 ImageBuilder）"
+        description: "直接使用底包快速构建固件 ----（跳过 ImageBuilder）"
         required: false
         default: false
         type: boolean
       custom_rootfs_url:
-        description: "自定义 rootfs.tar.gz 链接，留空时使用内置默认链接"
+        description: "25.12.x 预构建 rootfs.tar.gz 链接，跳过 ImageBuilder 时必填"
         required: false
         default: ""
         type: string
@@ -235,26 +223,16 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Set executable permissions
-        run: chmod +x ${{ github.workspace }}/n1/build24.sh
+        run: chmod +x ${{ github.workspace }}/n1/build25.sh
 
       - name: Debug workspace contents
         run: ls -R
-      
-      - name: Enable Store integration
-        run: |
-          if [ "${{ github.event.inputs.enable_store }}" == "true" ]; then
-            echo 'CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-store"' >> shell/custom-packages.sh
-            echo "✅ 已追加 luci-app-store"
-          else
-            echo "❎ 未启用 luci-app-store"
-          fi
 
       - name: 处理是否替换 banner 信息
         if: ${{ github.event.inputs.skip_imagebuilder == 'false' && github.event.inputs.replace_banner == 'true' }}
         run: |
-          # 使用ImageBuilder构建 且用户勾选了替换banner时
           cp n1/99-banner.sh files/etc/uci-defaults/
-      
+
       - name: Build Rootfs for Radxa and Other Boards (ImmortalWrt)
         if: ${{ github.event.inputs.skip_imagebuilder != 'true' }}
         run: |
@@ -263,7 +241,11 @@ jobs:
           include_docker="${{ github.event.inputs.include_docker }}"
           rootfs_partsize="${{ github.event.inputs.rootfs_partsize }}"
           luci_version="${{ github.event.inputs.luci_version }}"
-          
+          if [[ "$luci_version" =~ ^25\.12-rc([0-9]+)$ ]]; then
+            luci_version="25.12.0-rc${BASH_REMATCH[1]}"
+            echo "Normalized luci_version to: $luci_version"
+          fi
+
           IFS=',' read -r -a profile_array <<< "$profiles"
           
           for profile in "${profile_array[@]}"; do
@@ -273,38 +255,30 @@ jobs:
               --user root \
               -v "${{ github.workspace }}/bin:/home/build/immortalwrt/bin" \
               -v "${{ github.workspace }}/files/etc/uci-defaults:/home/build/immortalwrt/files/etc/uci-defaults" \
-              -v "${{ github.workspace }}/arch/arch.conf:/home/build/immortalwrt/files/etc/opkg/arch.conf" \
               -v "${{ github.workspace }}/shell:/home/build/immortalwrt/shell" \
               -v "${{ github.workspace }}/n1/banner:/home/build/immortalwrt/files/mnt/banner" \
-              -v "${{ github.workspace }}/n1/imm.config:/home/build/immortalwrt/.config" \
-              -v "${{ github.workspace }}/n1/build24.sh:/home/build/immortalwrt/build.sh" \
+              -v "${{ github.workspace }}/n1/build25.sh:/home/build/immortalwrt/build.sh" \
               -e PROFILE=$profile \
               -e INCLUDE_DOCKER=$include_docker \
               -e ROOTFS_PARTSIZE=$rootfs_partsize \
               immortalwrt/imagebuilder:armsr-armv8-openwrt-${luci_version} /bin/bash /home/build/immortalwrt/build.sh
           done
-          
+
       - name: Download prebuilt rootfs.tar.gz
         if: ${{ github.event.inputs.skip_imagebuilder == 'true' }}
         run: |
           echo "📦 正在下载预构建 rootfs"
           CUSTOM_ROOTFS_URL="${{ github.event.inputs.custom_rootfs_url }}"
-          DEFAULT_ROOTFS_URL="https://github.com/wukongdaily/AutoBuildImmortalWrt/releases/download/rootfs/immortalwrt-24.10.2-armsr-armv8-generic-rootfs.tar.gz"
-          if [ -n "$CUSTOM_ROOTFS_URL" ]; then
-            ROOTFS_URL="$CUSTOM_ROOTFS_URL"
-            echo "PREBUILT_NAME_PREFIX=custom-wrt" >> $GITHUB_ENV
-            echo "PREBUILT_LUCI_VERSION=unknown" >> $GITHUB_ENV
-            echo "Using custom rootfs URL: $ROOTFS_URL"
-          else
-            ROOTFS_URL="$DEFAULT_ROOTFS_URL"
-            echo "PREBUILT_NAME_PREFIX=immortalwrt" >> $GITHUB_ENV
-            echo "PREBUILT_LUCI_VERSION=24.10.2" >> $GITHUB_ENV
-            echo "Using default rootfs URL: $ROOTFS_URL"
+          if [ -z "$CUSTOM_ROOTFS_URL" ]; then
+            echo "❌ 25.12.x 暂无内置默认 rootfs 链接，请填写 custom_rootfs_url"
+            exit 1
           fi
+          echo "PREBUILT_NAME_PREFIX=custom-wrt" >> $GITHUB_ENV
+          echo "PREBUILT_LUCI_VERSION=unknown" >> $GITHUB_ENV
           mkdir -p bin/targets/armsr/armv8
           curl --fail --location --show-error --silent \
             -o bin/targets/armsr/armv8/openwrt-armvirt-64-default-rootfs.tar.gz \
-            "$ROOTFS_URL"
+            "$CUSTOM_ROOTFS_URL"
 
       - name: 查找rootfs.tar.gz所在路径
         id: find_rootfs
@@ -333,11 +307,14 @@ jobs:
         run: |
           MODEL=${{ inputs.openwrt_board }}
           LUCI_VERSION="${{ github.event.inputs.luci_version }}"
+          if [[ "$LUCI_VERSION" =~ ^25\.12-rc([0-9]+)$ ]]; then
+            LUCI_VERSION="25.12.0-rc${BASH_REMATCH[1]}"
+          fi
 
           for FILE in ${{ env.PACKAGED_OUTPUTPATH }}/*.img.gz; do
             echo "Processing file: $FILE"
             FILENAME=$(basename "$FILE")
-            KERNEL_VERSION=$(echo "$FILENAME" | grep -oP 'k\d+\.\d+\.\d+') 
+            KERNEL_VERSION=$(echo "$FILENAME" | grep -oP 'k\d+\.\d+\.\d+')
             if [[ -z "$KERNEL_VERSION" ]]; then
               echo "Skipped: Could not extract kernel version from $FILENAME"
               continue
@@ -358,7 +335,7 @@ jobs:
         uses: softprops/action-gh-release@v2.2.1
         with:
           tag_name: ophub
-          name: ImmortalWrt for boxs
+          name: ImmortalWrt for boxs 25.12.x
           body_path: ${{ github.workspace }}/n1/box.md
           files: |
             ${{ env.PACKAGED_OUTPUTPATH }}/*.img.gz
