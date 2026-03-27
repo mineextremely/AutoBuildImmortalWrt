@@ -1,4 +1,4 @@
-name: Build boxs by ophub
+name: Build-ophub-boxs-24.10.x
 on:
   workflow_dispatch:
     inputs:
