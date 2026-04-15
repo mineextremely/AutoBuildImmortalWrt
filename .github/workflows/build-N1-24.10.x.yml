@@ -65,7 +65,7 @@ on:
       builder_name:
         description: "设置打包作者的名称"
         required: true
-        default: 'minex'
+        default: 'Actions Packaged'
 
 jobs:
   build:
