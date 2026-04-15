@@ -3,10 +3,13 @@ on:
   workflow_dispatch:
     inputs:
       luci_version:
-        description: "填写 25.12.x 实验版 ImageBuilder 标签，例如 25.12.0-rc1"
-        required: true
-        default: "25.12.0-rc1"
-        type: string
+        description: "选择luci版本"
+        required: false
+        default: "25.12.0-rc2"
+        type: choice
+        options:
+          - 25.12.0-rc1
+          - 25.12.0-rc2
       openwrt_kernel:
         description: "选择构建的内核 当高版本内核没有时 系统会自动挑选匹配的内核。比如radxa e52c 即便你选择了6.1.y 可能最终构建还是5.10.160"
         required: false

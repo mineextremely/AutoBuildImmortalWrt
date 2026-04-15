@@ -4,10 +4,13 @@ on:
   workflow_dispatch:
     inputs:
       luci_version:
-        description: "填写 25.12.x 实验版 ImageBuilder 标签，例如 25.12.0-rc1"
-        required: true
-        default: "25.12.0-rc1"
-        type: string
+        description: "选择luci版本"
+        required: false
+        default: "25.12.0-rc2"
+        type: choice
+        options:
+          - 25.12.0-rc1
+          - 25.12.0-rc2
       profile:
         type: choice
         description: |
@@ -150,6 +153,7 @@ jobs:
               -v "${{ github.workspace }}/files:/home/build/immortalwrt/files" \
               -v "${{ github.workspace }}/custom:/home/build/immortalwrt/files/etc/config" \
               -v "${{ github.workspace }}/shell:/home/build/immortalwrt/shell" \
+              -v "${{ github.workspace }}/rockchip/imm25.config:/home/build/immortalwrt/.config" \
               -v "${{ github.workspace }}/rockchip/build25.sh:/home/build/immortalwrt/build.sh" \
               -v "${{ github.workspace }}/banner/rockchip/banner:/home/build/immortalwrt/files/mnt/banner" \
               -e PROFILE=$profile \
