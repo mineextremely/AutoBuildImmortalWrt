@@ -36,7 +36,7 @@ fi
 PACKAGES=""
 PACKAGES="$PACKAGES curl nano-full wget-ssl"
 PACKAGES="$PACKAGES openssh-sftp-server"
-PACKAGES="$PACKAGES luci-i18n-diskman-zh-cn"
+#PACKAGES="$PACKAGES luci-i18n-diskman-zh-cn"
 PACKAGES="$PACKAGES luci-i18n-package-manager-zh-cn"
 PACKAGES="$PACKAGES luci-i18n-firewall-zh-cn"
 PACKAGES="$PACKAGES luci-theme-argon"
@@ -45,8 +45,7 @@ PACKAGES="$PACKAGES luci-i18n-ttyd-zh-cn"
 PACKAGES="$PACKAGES kmod-mt7921u iw-full iwinfo wpad-basic-mbedtls"
 
 PACKAGES="$PACKAGES luci-app-openclash kmod-nft-tproxy"
-PACKAGES="$PACKAGES luci-app-openclash kmod-nft-tproxy"
-PACKAGES="$PACKAGES luci-i18n-filemanager-zh-cn"
+#PACKAGES="$PACKAGES luci-i18n-filemanager-zh-cn"
 # 判断是否需要编译 Docker 插件
 if [ "$INCLUDE_DOCKER" = "yes" ]; then
     PACKAGES="$PACKAGES luci-i18n-dockerman-zh-cn"
