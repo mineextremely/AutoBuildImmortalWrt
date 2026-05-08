@@ -1,17 +1,17 @@
 #!/bin/bash
-# Log file for debugging
+# armsr-armv8 build24.sh - 24.10.x rootfs for N1 / ophub boxes
 source shell/custom-packages.sh
 source shell/switch_repository.sh
+source shell/lib-build.sh
+source shell/lib-openclash.sh
 echo "第三方软件包: $CUSTOM_PACKAGES"
 LOGFILE="/tmp/uci-defaults-log.txt"
 echo "Starting 99-custom.sh at $(date)" >> $LOGFILE
-# yml 传入的路由器型号 PROFILE
+
 echo "Building for profile: $PROFILE"
-# yml 传入的固件大小 ROOTFS_PARTSIZE
 echo "Building for ROOTFS_PARTSIZE: $ROOTFS_PARTSIZE"
-# 输出调试信息
 echo "$(date '+%Y-%m-%d %H:%M:%S') - 开始构建arm64的rootfs.tar.gz"
-# 定义所需安装的包列表 下列插件你都可以自行删减
+
 PACKAGES=""
 PACKAGES="$PACKAGES curl fdisk"
 #PACKAGES="$PACKAGES luci-i18n-diskman-zh-cn"
@@ -30,11 +30,9 @@ PACKAGES="$PACKAGES openssh-sftp-server"
 #PACKAGES="$PACKAGES luci-i18n-samba4-zh-cn"
 # 文件管理器
 #PACKAGES="$PACKAGES luci-i18n-filemanager-zh-cn"
-# 判断是否需要编译 Docker 插件
-if [ "$INCLUDE_DOCKER" = "yes" ]; then
-    PACKAGES="$PACKAGES luci-i18n-dockerman-zh-cn"
-    echo "✅ 已选择docker : luci-i18n-dockerman-zh-cn"
-fi
+
+add_docker_if_enabled
+
 # 斐讯N1 无线
 PACKAGES="$PACKAGES kmod-brcmfmac wpad-basic-mbedtls iw iwinfo"
 PACKAGES="$PACKAGES perlbase-base perlbase-file perlbase-time perlbase-utf8 perlbase-xsloader"
@@ -43,45 +41,15 @@ CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-amlogic luci-i18n-amlogic-zh-cn"
 
 echo "🔄 正在同步第三方软件仓库 Cloning run file repo..."
 git clone --depth=1 https://github.com/mineextremely/store.git /tmp/store-run-repo
-# 拷贝 run/arm64 下所有 run 文件和ipk文件 到 extra-packages 目录
 mkdir -p /home/build/immortalwrt/extra-packages
 cp -r /tmp/store-run-repo/run/arm64/* /home/build/immortalwrt/extra-packages/
 echo "✅ Run files copied to extra-packages:"
 ls -lh /home/build/immortalwrt/extra-packages/*.run
-# 解压并拷贝ipk到packages目录
-sh shell/prepare-packages.sh
+sh shell/sync-packages.sh ipk
 ls -lah /home/build/immortalwrt/packages/
-# 添加架构优先级信息
-sed -i '1i\
-arch aarch64_generic 10\n\
-arch aarch64_cortex-a53 15' repositories.conf
+inject_arch_priority
 
-# ======== shell/custom-packages.sh =======
-# 合并imm仓库以外的第三方插件
 PACKAGES="$PACKAGES $CUSTOM_PACKAGES"
 
-# 若构建openclash 则添加内核
-if echo "$PACKAGES" | grep -q "luci-app-openclash"; then
-    echo "✅ 已选择 luci-app-openclash，添加 openclash core"
-    mkdir -p files/etc/openclash/core
-    # Download clash_meta
-    META_URL="https://raw.githubusercontent.com/vernesong/OpenClash/core/dev/smart/clash-linux-arm64.tar.gz"
-    wget -qO- $META_URL | tar xOvz > files/etc/openclash/core/clash_meta
-    chmod +x files/etc/openclash/core/clash_meta
-else
-    echo "⚪️ 未选择 luci-app-openclash"
-fi
-
-
-# 构建镜像
-echo "$(date '+%Y-%m-%d %H:%M:%S') - Building image with the following packages:"
-echo "$PACKAGES"
-
-make image PROFILE=$PROFILE PACKAGES="$PACKAGES" FILES="/home/build/immortalwrt/files" ROOTFS_PARTSIZE=$ROOTFS_PARTSIZE
-
-if [ $? -ne 0 ]; then
-    echo "$(date '+%Y-%m-%d %H:%M:%S') - Error: Build failed!"
-    exit 1
-fi
-
-echo "$(date '+%Y-%m-%d %H:%M:%S') - Build completed successfully."
+setup_openclash arm64 ipk
+make_firmware "$PROFILE" "$ROOTFS_PARTSIZE"
