@@ -524,6 +524,9 @@ on:
         type: boolean
 
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-22.04

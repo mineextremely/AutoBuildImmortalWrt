@@ -71,6 +71,13 @@ if echo "$PACKAGES" | grep -q "luci-app-openclash"; then
     META_URL="https://raw.githubusercontent.com/vernesong/OpenClash/core/dev/smart/clash-linux-arm64.tar.gz"
     wget -qO- $META_URL | tar xOvz > files/etc/openclash/core/clash_meta
     chmod +x files/etc/openclash/core/clash_meta
+    # Download latest openclash Client
+    URL=$(curl -s https://api.github.com/repos/vernesong/OpenClash/releases/latest \
+      | grep "browser_download_url.*ipk" \
+      | head -n1 \
+      | cut -d '"' -f 4)
+    echo "OpenClash latest ipk: $URL"
+    wget "$URL" -P /home/build/immortalwrt/packages/
 else
     echo "⚪️ 未选择 luci-app-openclash"
 fi
