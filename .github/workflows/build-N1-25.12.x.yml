@@ -142,7 +142,7 @@ jobs:
 
       - name: Package armsr-armv8 as ImmortalWrt for N1
         uses: wukongdaily/flippy-openwrt-actions@master
-        if: ${{ steps.down.outputs.status == 'success' && !cancelled() }}
+        if: ${{ !cancelled() && steps.find_rootfs.outcome == 'success' && steps.find_rootfs.outputs.file != '' }}
         env:
           OPENWRT_ARMVIRT: ${{ steps.find_rootfs.outputs.file }}
           PACKAGE_SOC: s905d
@@ -152,6 +152,7 @@ jobs:
 
       - name: Rename .img.gz file
         id: rename
+        if: ${{ !cancelled() && env.PACKAGED_OUTPUTPATH != '' }}
         run: |
           FILE=$(ls ${{ env.PACKAGED_OUTPUTPATH }}/*.img.gz | head -n1)
           echo "Image file is: $FILE"
