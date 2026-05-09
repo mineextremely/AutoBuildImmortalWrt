@@ -175,7 +175,7 @@ jobs:
         with:
           tag_name: phicomm-n1
           name: ImmortalWrt for Phicomm N1 25.12.x
-          body_path: ${{ github.workspace }}/n1/info.md
+          body_path: ${{ github.workspace }}/armsr-armv8/info-n1.md
           files: |
             ${{ env.PACKAGED_OUTPUTPATH }}/*.img.gz
         env:

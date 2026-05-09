@@ -339,7 +339,7 @@ jobs:
         with:
           tag_name: ophub
           name: ImmortalWrt for boxs 25.12.x
-          body_path: ${{ github.workspace }}/n1/box.md
+          body_path: ${{ github.workspace }}/armsr-armv8/box.md
           files: |
             ${{ env.PACKAGED_OUTPUTPATH }}/*.img.gz
         env:
