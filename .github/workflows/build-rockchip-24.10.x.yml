@@ -198,26 +198,20 @@ jobs:
       - name: Create info
         run: |
           cat > ${{ github.workspace }}/router-info.md <<EOF
-          ## 📡 路由器后台信息
+          ## ImmortalWrt Rockchip 24.10.x
 
-          - ✳️ **软路由型号**: ${{ github.event.inputs.profile }}
+          - 📡 **设备型号**: ${{ github.event.inputs.profile }}
           - 🏠 **后台地址**: ${{ github.event.inputs.custom_router_ip }}
           - 👤 **用户名**: root
           - 🔑 **密码**: 无
+          - 🐳 **Docker**: ${{ github.event.inputs.include_docker == 'yes' && '已集成' || '未集成' }}
           EOF
-
-          if [ "${{ github.event.inputs.include_docker }}" == "yes" ]; then
-            extra_content="#### 默认带docker"
-            echo -e "\n$extra_content" >> ${{ github.workspace }}/router-info.md
-          else
-            echo -e "\n#### 不带docker" >> ${{ github.workspace }}/router-info.md
-          fi
 
       - name: Upload ImmortWrt as release assets
         uses: softprops/action-gh-release@v2.2.1
         with:
-          tag_name: Autobuild
-          name: ImmortWrt-Rockchip
+          tag_name: ActionsAutoBuild-Rockchip-24.10
+          name: ImmortalWrt Rockchip 24.10
           body_path: ${{ github.workspace }}/router-info.md
           files: |
             ${{ github.workspace }}/bin/targets/rockchip/armv8/*.img.gz

@@ -361,8 +361,8 @@ jobs:
       - name: Upload firmware to GitHub Releases
         uses: softprops/action-gh-release@v2.2.1
         with:
-          tag_name: ophub
-          name: ImmortalWrt for boxs
+          tag_name: ActionsAutoBuild-ophub-24.10
+          name: ImmortalWrt Boxs 24.10
           body_path: ${{ github.workspace }}/armsr-armv8/box.md
           files: |
             ${{ env.PACKAGED_OUTPUTPATH }}/*.img.gz

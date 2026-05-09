@@ -196,8 +196,8 @@ jobs:
       - name: Upload firmware to GitHub Releases
         uses: softprops/action-gh-release@v2.2.1
         with:
-          tag_name: phicomm-n1
-          name: ImmortalWrt for Phicomm N1 24.10.x
+          tag_name: ActionsAutoBuild-N1-24.10
+          name: ImmortalWrt N1 24.10
           body_path: ${{ github.workspace }}/armsr-armv8/info-n1.md
           files: |
             ${{ env.PACKAGED_OUTPUTPATH }}/*.img.gz

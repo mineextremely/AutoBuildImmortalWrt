@@ -674,23 +674,22 @@ jobs:
 
       - name: Create info
         run: |
-          if [ "${{ github.event.inputs.include_docker }}" == "yes" ]; then
-            extra_content="### 默认带docker"
-            echo -e "\n $extra_content" >> ${{ github.workspace }}/mediatek-filogic/info.md
-          else
-            echo -e "NO docker"
-          fi
-          custom_router_ip="${{ github.event.inputs.custom_router_ip }}"
-          extra_content_ip="#### 管理地址 $custom_router_ip"
-          echo -e "\n $extra_content_ip" >> ${{ github.workspace }}/mediatek-filogic/info.md
-          
-          
+          cat > ${{ github.workspace }}/router-info.md <<EOF
+          ## ImmortalWrt Wireless Router 24.10.x
+
+          - 📡 **设备型号**: ${{ github.event.inputs.profile }}
+          - 🏠 **后台地址**: ${{ github.event.inputs.custom_router_ip }}
+          - 👤 **用户名**: root
+          - 🔑 **密码**: 无
+          - 🐳 **Docker**: ${{ github.event.inputs.include_docker == 'yes' && '已集成' || '未集成' }}
+          EOF
+
       - name: Upload ImmortalWrt as release assets
         uses: softprops/action-gh-release@v2.2.1
         with:
-          tag_name: ${{ github.event.inputs.profile }}
-          name: ImmortalWrt-Wireless
-          body_path: ${{ github.workspace }}/mediatek-filogic/info.md
+          tag_name: ActionsAutoBuild-Wireless-24.10
+          name: ImmortalWrt Wireless 24.10
+          body_path: ${{ github.workspace }}/router-info.md
           files: |
             ${{ github.workspace }}/bin/targets/${{ env.platform }}/*
           token: ${{ secrets.GITHUB_TOKEN }}

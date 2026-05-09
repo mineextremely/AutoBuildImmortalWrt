@@ -16,7 +16,7 @@ EOF
 
 # --- Third-party repo sync (24.x / opkg) ---
 sync_third_party_ipk() {
-    local repo_url="${1:-https://github.com/mineextremely/store.git}"
+    local repo_url="${1:-https://github.com/wukongdaily/store.git}"
     local arch_dir="${2:-arm64}"
 
     if [ -z "$CUSTOM_PACKAGES" ]; then
