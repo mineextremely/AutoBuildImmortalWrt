@@ -39,4 +39,5 @@ PACKAGES="$PACKAGES kmod-brcmfmac wpad-basic-mbedtls iw iwinfo"
 PACKAGES="$PACKAGES perlbase-base perlbase-file perlbase-time perlbase-utf8 perlbase-xsloader"
 
 setup_openclash arm64 apk
+setup_mihomo arm64
 make_firmware "$PROFILE" "$ROOTFS_PARTSIZE"

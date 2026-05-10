@@ -37,4 +37,5 @@ PACKAGES="$PACKAGES luci-app-openclash kmod-nft-tproxy"
 add_docker_if_enabled
 
 setup_openclash arm64 apk
+setup_mihomo arm64
 make_firmware "$PROFILE" "$ROOTFS_PARTSIZE"

@@ -30,4 +30,5 @@ PACKAGES="$PACKAGES $CUSTOM_PACKAGES"
 add_docker_if_enabled
 
 setup_openclash arm64 apk
+setup_mihomo arm64
 make_firmware "$PROFILE" "" ""

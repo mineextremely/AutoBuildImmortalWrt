@@ -52,4 +52,5 @@ inject_arch_priority
 PACKAGES="$PACKAGES $CUSTOM_PACKAGES"
 
 setup_openclash arm64 ipk
+setup_mihomo arm64
 make_firmware "$PROFILE" "$ROOTFS_PARTSIZE"

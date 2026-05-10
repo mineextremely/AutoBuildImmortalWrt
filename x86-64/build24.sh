@@ -37,4 +37,5 @@ PACKAGES="$PACKAGES $CUSTOM_PACKAGES"
 add_docker_if_enabled
 
 setup_openclash amd64 ipk
+setup_mihomo amd64
 make_firmware "generic" "$PROFILE"
