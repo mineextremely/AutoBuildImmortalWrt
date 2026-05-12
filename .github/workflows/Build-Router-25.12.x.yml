@@ -513,7 +513,11 @@ on:
       pppoe_password:
         description: "宽带密码 (若启用PPPoE)"
         required: false
-
+      replace_banner:
+        description: '替换为自定义banner'
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: write
@@ -546,8 +550,18 @@ jobs:
               exit 1
             fi
           fi
-      
-    
+
+      - name: 处理是否替换 banner 信息
+        if: ${{ github.event.inputs.replace_banner == 'true' }}
+        run: |
+          if [ -f "banner/mediatek-filogic/banner" ]; then
+            echo "✅ 找到 MediaTek Filogic 自定义 banner 文件"
+            cp banner/99-banner.sh files/etc/uci-defaults/
+            chmod +x files/etc/uci-defaults/99-banner.sh
+          else
+            echo "⚠️ 未找到 banner/mediatek-filogic/banner，跳过 banner 替换"
+          fi
+
       - name: Build Wireless ImmortalWrt 25.12.x
         run: | 
           profile="${{ github.event.inputs.profile }}"
