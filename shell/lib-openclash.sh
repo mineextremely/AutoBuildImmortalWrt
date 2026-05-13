@@ -1,7 +1,7 @@
 # shell/lib-openclash.sh
 # OpenClash core + client download (shared by all build24/build25 scripts)
 # Usage: setup_openclash <arch> <pkg_format>
-#   arch: arm64 | amd64 | amd64-v1
+#   arch: arm64 | amd64 | amd64-v3
 #   pkg_format: ipk | apk
 
 setup_openclash() {

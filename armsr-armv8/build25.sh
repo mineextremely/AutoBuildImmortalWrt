@@ -21,7 +21,7 @@ fi
 # 25.12.x 仅使用官方仓库软件包，不注入第三方 run/ipk 包
 PACKAGES=""
 PACKAGES="$PACKAGES curl fdisk"
-#PACKAGES="$PACKAGES luci-i18n-diskman-zh-cn"
+PACKAGES="$PACKAGES luci-i18n-diskman-zh-cn"
 PACKAGES="$PACKAGES luci-i18n-package-manager-zh-cn"
 PACKAGES="$PACKAGES luci-i18n-firewall-zh-cn"
 PACKAGES="$PACKAGES luci-theme-argon"
