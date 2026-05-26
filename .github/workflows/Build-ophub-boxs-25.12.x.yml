@@ -5,11 +5,10 @@ on:
       luci_version:
         description: "选择luci版本"
         required: false
-        default: "25.12.0-rc2"
+        default: "25.12.0"
         type: choice
         options:
-          - 25.12.0-rc1
-          - 25.12.0-rc2
+          - 25.12.0
       openwrt_kernel:
         description: "选择构建的内核 当高版本内核没有时 系统会自动挑选匹配的内核。比如radxa e52c 即便你选择了6.1.y 可能最终构建还是5.10.160"
         required: false
@@ -244,10 +243,6 @@ jobs:
           include_docker="${{ github.event.inputs.include_docker }}"
           rootfs_partsize="${{ github.event.inputs.rootfs_partsize }}"
           luci_version="${{ github.event.inputs.luci_version }}"
-          if [[ "$luci_version" =~ ^25\.12-rc([0-9]+)$ ]]; then
-            luci_version="25.12.0-rc${BASH_REMATCH[1]}"
-            echo "Normalized luci_version to: $luci_version"
-          fi
 
           IFS=',' read -r -a profile_array <<< "$profiles"
           
@@ -310,9 +305,6 @@ jobs:
         run: |
           MODEL=${{ inputs.openwrt_board }}
           LUCI_VERSION="${{ github.event.inputs.luci_version }}"
-          if [[ "$LUCI_VERSION" =~ ^25\.12-rc([0-9]+)$ ]]; then
-            LUCI_VERSION="25.12.0-rc${BASH_REMATCH[1]}"
-          fi
 
           for FILE in ${{ env.PACKAGED_OUTPUTPATH }}/*.img.gz; do
             echo "Processing file: $FILE"
