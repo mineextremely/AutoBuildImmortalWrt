@@ -73,9 +73,14 @@ jobs:
           fi
           LUCI_VERSION="${{ github.event.inputs.luci_version }}"
           OUTPUT_NAME="immortalwrt-${LUCI_VERSION}-armsr-armv8-generic-rootfs.tar.gz"
-          cp "$ROOTFS_FILE" "bin/targets/armsr/armv8/${OUTPUT_NAME}"
-          echo "Renamed to: ${OUTPUT_NAME}"
-          echo "output_file=bin/targets/armsr/armv8/${OUTPUT_NAME}" >> $GITHUB_OUTPUT
+          OUTPUT_PATH="bin/targets/armsr/armv8/${OUTPUT_NAME}"
+          if [ "$(basename "$ROOTFS_FILE")" != "$OUTPUT_NAME" ]; then
+            mv "$ROOTFS_FILE" "$OUTPUT_PATH"
+            echo "Renamed to: ${OUTPUT_NAME}"
+          else
+            echo "Already named: ${OUTPUT_NAME}"
+          fi
+          echo "output_file=${OUTPUT_PATH}" >> $GITHUB_OUTPUT
 
       - name: Upload rootfs to GitHub Releases
         uses: softprops/action-gh-release@v2.2.1
