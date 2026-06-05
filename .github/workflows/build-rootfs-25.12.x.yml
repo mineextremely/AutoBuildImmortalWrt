@@ -1,0 +1,95 @@
+name: build-rootfs-25.12.x
+
+on:
+  workflow_dispatch:
+    inputs:
+      luci_version:
+        description: "选择luci版本"
+        required: false
+        default: "25.12.0"
+        type: choice
+        options:
+          - 25.12.0-rc1
+          - 25.12.0-rc2
+          - 25.12.0
+      include_docker:
+        description: "是否编译 Docker 插件"
+        required: true
+        default: 'no'
+        type: choice
+        options:
+          - 'yes'
+          - 'no'
+      rootfs_partsize:
+        description: "rootfs 分区大小(MB)"
+        required: true
+        default: "1024"
+        type: choice
+        options:
+          - '1024'
+          - '2048'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set executable permissions
+        run: chmod +x ${{ github.workspace }}/armsr-armv8/build25.sh
+
+      - name: Building armsr-armv8 rootfs 25.12.x
+        run: |
+          echo "✅ Using ImageBuilder to build rootfs"
+          profile="generic"
+          include_docker="${{ github.event.inputs.include_docker }}"
+          rootfs_partsize="${{ github.event.inputs.rootfs_partsize }}"
+          luci_version="${{ github.event.inputs.luci_version }}"
+
+          docker run --rm -i \
+            --user root \
+            -v "${{ github.workspace }}/bin:/home/build/immortalwrt/bin" \
+            -v "${{ github.workspace }}/files/etc/uci-defaults:/home/build/immortalwrt/files/etc/uci-defaults" \
+            -v "${{ github.workspace }}/shell:/home/build/immortalwrt/shell" \
+            -v "${{ github.workspace }}/armsr-armv8/build25.sh:/home/build/immortalwrt/build.sh" \
+            -e PROFILE=$profile \
+            -e INCLUDE_DOCKER=$include_docker \
+            -e ROOTFS_PARTSIZE=$rootfs_partsize \
+            immortalwrt/imagebuilder:armsr-armv8-openwrt-${luci_version} /bin/bash /home/build/immortalwrt/build.sh
+
+      - name: Find rootfs.tar.gz and rename
+        id: find_rootfs
+        run: |
+          ROOTFS_FILE=$(find bin/targets/armsr/armv8/ -type f -name "*rootfs.tar.gz" | head -n1)
+          echo "Found: $ROOTFS_FILE"
+          if [ ! -f "$ROOTFS_FILE" ]; then
+            echo "❌ rootfs.tar.gz not found!"
+            exit 1
+          fi
+          LUCI_VERSION="${{ github.event.inputs.luci_version }}"
+          OUTPUT_NAME="immortalwrt-${LUCI_VERSION}-armsr-armv8-generic-rootfs.tar.gz"
+          cp "$ROOTFS_FILE" "bin/targets/armsr/armv8/${OUTPUT_NAME}"
+          echo "Renamed to: ${OUTPUT_NAME}"
+          echo "output_file=bin/targets/armsr/armv8/${OUTPUT_NAME}" >> $GITHUB_OUTPUT
+
+      - name: Upload rootfs to GitHub Releases
+        uses: softprops/action-gh-release@v2.2.1
+        with:
+          tag_name: rootfs
+          name: ImmortalWrt armsr-armv8 rootfs
+          body: |
+            ImmortalWrt armsr-armv8 预构建 rootfs.tar.gz
+
+            - **24.10.x**: `immortalwrt-24.10.x-armsr-armv8-generic-rootfs.tar.gz`
+            - **25.12.x**: `immortalwrt-25.12.x-armsr-armv8-generic-rootfs.tar.gz`
+
+            供 N1/ophub boxs 工作流的 `skip_imagebuilder` 模式使用。
+          files: |
+            ${{ steps.find_rootfs.outputs.output_file }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
