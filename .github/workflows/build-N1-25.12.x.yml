@@ -62,7 +62,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
 
       - name: Set executable permissions
         run: chmod +x ${{ github.workspace }}/armsr-armv8/build25.sh
@@ -164,7 +164,7 @@ jobs:
           fi
 
       - name: Upload firmware to GitHub Releases
-        uses: softprops/action-gh-release@v2.2.1
+        uses: softprops/action-gh-release@v3
         with:
           tag_name: ActionsAutoBuild-N1-25.12
           name: ImmortalWrt N1 25.12

@@ -67,7 +67,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
 
       - name: Set executable permissions
         run: chmod +x ${{ github.workspace }}/x86-64/build24.sh
@@ -145,7 +145,7 @@ jobs:
           EOF
 
       - name: Upload ImmortWrt as release assets
-        uses: softprops/action-gh-release@v2.2.1
+        uses: softprops/action-gh-release@v3
         with:
           tag_name: ActionsAutoBuild-x86-64-24.10
           name: ImmortalWrt x86-64 24.10
