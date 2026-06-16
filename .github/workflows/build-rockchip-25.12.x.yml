@@ -109,7 +109,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
 
       - name: Set executable permissions
         run: chmod +x ${{ github.workspace }}/rockchip/build25.sh
@@ -186,7 +186,7 @@ jobs:
           echo -e "\n#### 不集成第三方 run/ipk 软件包，仅使用官方仓库软件包" >> ${{ github.workspace }}/router-info.md
 
       - name: Upload ImmortWrt as release assets
-        uses: softprops/action-gh-release@v2.2.1
+        uses: softprops/action-gh-release@v3
         with:
           tag_name: Autobuild
           name: ImmortWrt-Rockchip-25.12.x
