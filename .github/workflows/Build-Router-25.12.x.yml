@@ -490,6 +490,11 @@ on:
         description: "请设置路由器的管理地址 格式:192.168.x.1 或 10.x.x.1"
         required: true
         default: "192.168.100.1"
+      enable_store:
+        description: "集成 store 商店"
+        required: false
+        type: boolean
+        default: false
       include_docker:
         description: |
           是否编译 Docker 插件
@@ -560,6 +565,15 @@ jobs:
             chmod +x files/etc/uci-defaults/99-banner.sh
           else
             echo "⚠️ 未找到 banner/mediatek-filogic/banner，跳过 banner 替换"
+          fi
+
+      - name: Enable Store integration
+        run: |
+          if [ "${{ github.event.inputs.enable_store }}" == "true" ]; then
+            echo 'CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-store"' >> shell/apk-custom-packages.sh
+            echo "✅ 已追加 luci-app-store"
+          else
+            echo "❎ 未启用 luci-app-store"
           fi
 
       - name: Build Wireless ImmortalWrt 25.12.x

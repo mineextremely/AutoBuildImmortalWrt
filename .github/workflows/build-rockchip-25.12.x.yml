@@ -1,5 +1,4 @@
 name: build-rockchip-25.12.x
-
 on:
   workflow_dispatch:
     inputs:
@@ -71,6 +70,11 @@ on:
         description: '设置软件包大小 单位(MB)'
         required: true
         default: '1024'
+      enable_store:
+        description: "集成 store 商店"
+        required: false
+        type: boolean
+        default: false
       include_docker:
         description: |
           是否编译 Docker 官方插件
@@ -138,6 +142,21 @@ jobs:
             chmod +x files/etc/uci-defaults/99-banner.sh
           else
             echo "⚠️ 未找到 banner/rockchip/banner，跳过 banner 替换"
+          fi
+
+      - name: Enable Store integration
+        run: |
+          if [ "${{ github.event.inputs.enable_store }}" == "true" ]; then
+            echo 'CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-store"' >> shell/apk-custom-packages.sh
+            echo "✅ 已追加 luci-app-store"
+          else
+            echo "❎ 未启用 luci-app-store"
+          fi
+      - name: Check Docker
+        run: |
+          if [[ "${{ inputs.include_docker }}" == "yes" ]]; then
+             echo 'CUSTOM_PACKAGES="$CUSTOM_PACKAGES docker"' >> shell/custom-packages.sh
+             echo "✅ 已为Rockchip平台补充 docker 组件"
           fi
 
       - name: Building Rockchip ImmortalWrt 25.12.x
