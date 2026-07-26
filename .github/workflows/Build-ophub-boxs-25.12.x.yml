@@ -22,6 +22,7 @@ on:
           - 6.1.y
           - 6.6.y
           - 6.12.y
+          - 6.18.y
       openwrt_board:
         description: "选择型号"
         required: false

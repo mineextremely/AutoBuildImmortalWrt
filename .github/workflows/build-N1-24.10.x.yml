@@ -21,9 +21,9 @@ on:
         default: "6.6.120"
         type: choice
         options:
-          - 5.4.291
-          - 5.10.235
-          - 5.15.189
+          - 5.4.296
+          - 5.10.240
+          - 5.15.196
           - 6.1.160
           - 6.6.120
           - 6.12.65
@@ -167,7 +167,7 @@ jobs:
           echo "file=$ROOTFS_FILE" >> $GITHUB_OUTPUT
 
       - name: Package armsr-armv8 as ImmortalWrt for N1
-        uses: wukongdaily/flippy-openwrt-actions@master
+        uses: ophub/flippy-openwrt-actions@main
         if: ${{ steps.down.outputs.status == 'success' && !cancelled() }}
         env:
           OPENWRT_ARMVIRT: ${{ steps.find_rootfs.outputs.file }}
