@@ -10,6 +10,14 @@ on:
         options:
           - 25.12.0
           - 25.12.1
+      kernel_usage:
+        description: "选择内核 release 标签 (stable 更稳定, flippy 版本更新)"
+        required: false
+        default: "flippy"
+        type: choice
+        options:
+          - stable
+          - flippy
       openwrt_kernel:
         description: "选择构建的内核 当高版本内核没有时 系统会自动挑选匹配的内核。比如radxa e52c 即便你选择了6.1.y 可能最终构建还是5.10.160"
         required: false
@@ -299,7 +307,7 @@ jobs:
           openwrt_kernel: ${{ inputs.openwrt_kernel }}
           auto_kernel: true
           kernel_repo: "ophub/kernel"
-          kernel_usage: flippy
+          kernel_usage: ${{ inputs.kernel_usage }}
           builder_name: ${{ inputs.builder_name }}
 
       - name: Rename .img.gz files
