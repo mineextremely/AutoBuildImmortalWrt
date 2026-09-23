@@ -34,8 +34,8 @@ PACKAGES="$PACKAGES openssh-sftp-server"
 
 add_docker_if_enabled
 
-# 斐讯 N1 无线
-PACKAGES="$PACKAGES kmod-brcmfmac wpad-basic-mbedtls iw iwinfo"
+# 无线
+PACKAGES="$PACKAGES kmod-brcmfmac wpad-basic-mbedtls iwinfo kmod-mt7921u iw-full"
 PACKAGES="$PACKAGES perlbase-base perlbase-file perlbase-time perlbase-utf8 perlbase-xsloader"
 
 setup_openclash arm64 apk
