@@ -80,6 +80,8 @@ jobs:
           # 镜像标签映射：SNAPSHOT=master 快照，25.12-SNAPSHOT=25.12 分支快照，两者标签不同不可合并
           # 注意快照标签没有 openwrt- 中缀，且 SNAPSHOT 为小写
           # NORMALIZED 供后续改名的步骤使用（经 $GITHUB_ENV 传递）
+          # 变量名必须与 shell 中引用的大小写完全一致：小写 normalized 注入后
+          # 读不到 $NORMALIZED，会导致产物名缺失版本串（immortalwrt--<型号>-...）
           LUCI_VERSION="${{ github.event.inputs.luci_version }}"
           case "$LUCI_VERSION" in
             SNAPSHOT|25.12-SNAPSHOT)
@@ -91,7 +93,7 @@ jobs:
           esac
           echo "luci_version=$LUCI_VERSION"
           echo "normalized=$NORMALIZED"
-          echo "normalized=$NORMALIZED" >> $GITHUB_ENV
+          echo "NORMALIZED=$NORMALIZED" >> $GITHUB_ENV
 
       - name: 处理是否替换 banner 信息
         if: ${{ github.event.inputs.skip_imagebuilder == 'false' && github.event.inputs.replace_banner == 'true' }}
