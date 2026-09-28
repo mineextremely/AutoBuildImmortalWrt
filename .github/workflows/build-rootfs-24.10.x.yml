@@ -81,7 +81,11 @@ jobs:
           OUTPUT_NAME="immortalwrt-${LUCI_VERSION}-armsr-armv8-generic-rootfs.tar.gz"
           OUTPUT_PATH="bin/targets/armsr/armv8/${OUTPUT_NAME}"
           if [ "$(basename "$ROOTFS_FILE")" != "$OUTPUT_NAME" ]; then
-            mv "$ROOTFS_FILE" "$OUTPUT_PATH"
+            # ImageBuilder 在容器内以 --user root 运行，bin/ 下的目录属主是 root，
+            # 而本步骤以 runner 身份执行。同目录内改名需要对目录有写权限 → 必须 sudo。
+            # 24.10 目前只构建版本固定的镜像，产出名与 OUTPUT_NAME 相同不会走到这里，
+            # 但一旦将来接入快照源就会命中同一问题，故一并修正。
+            sudo mv "$ROOTFS_FILE" "$OUTPUT_PATH"
             echo "Renamed to: ${OUTPUT_NAME}"
           else
             echo "Already named: ${OUTPUT_NAME}"
