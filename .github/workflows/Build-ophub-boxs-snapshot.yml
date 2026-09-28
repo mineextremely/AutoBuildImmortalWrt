@@ -1,17 +1,12 @@
-name: Build-ophub-boxs-25.12.x
+name: Build-ophub-boxs-snapshot
+
+# master 快照（armsr-armv8-snapshot）专用，与 Build-ophub-boxs-25.12.x 分开：
+# 快照跟随 master，将来到 25.12 之后的版本线时包名与配置会分化，独立后互不牵连。
+# 25.12 分支快照（armsr-armv8-25.12-SNAPSHOT）仍留在 Build-ophub-boxs-25.12.x。
+
 on:
   workflow_dispatch:
     inputs:
-      luci_version:
-        description: "选择luci版本 (25.12-SNAPSHOT 为 25.12 分支快照源，包名变动可能导致构建失败。master 快照见 Build-ophub-boxs-snapshot)"
-        required: false
-        default: "25.12.2"
-        type: choice
-        options:
-          - 25.12.0
-          - 25.12.1
-          - 25.12.2
-          - 25.12-SNAPSHOT
       kernel_usage:
         description: "选择内核 release 标签 (stable 更稳定, flippy 版本更新)"
         required: false
@@ -208,7 +203,7 @@ on:
         default: false
         type: boolean
       custom_rootfs_url:
-        description: "25.12.x 预构建 rootfs.tar.gz 链接，跳过 ImageBuilder 时必填"
+        description: "master 快照预构建 rootfs.tar.gz 链接，跳过 ImageBuilder 时必填"
         required: false
         default: ""
         type: string
@@ -232,6 +227,13 @@ on:
 jobs:
   build:
     runs-on: ubuntu-24.04
+
+    env:
+      # master 快照的镜像标签没有 openwrt- 中缀；NORMALIZED 用于产物命名。
+      # 作为 job 级 env 对每个 step 直接可见，不必再走 $GITHUB_ENV。
+      IMAGE_TAG: armsr-armv8-snapshot
+      NORMALIZED: snapshot
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -241,27 +243,6 @@ jobs:
 
       - name: Debug workspace contents
         run: ls -R
-
-      - name: 解析版本与 ImageBuilder 镜像标签
-        id: ver
-        run: |
-          # 25.12-SNAPSHOT 走 25.12 分支快照镜像，标签没有 openwrt- 中缀
-          # NORMALIZED 供后续改名的步骤使用（经 $GITHUB_ENV 传递）
-          # 变量名必须与 shell 中引用的大小写完全一致：小写 normalized 注入后
-          # 读不到 $NORMALIZED，会导致产物名缺失版本串（immortalwrt--<型号>-...）
-          LUCI_VERSION="${{ github.event.inputs.luci_version }}"
-          case "$LUCI_VERSION" in
-            25.12-SNAPSHOT)
-              # 不能取 "snapshot"：master 快照（Build-ophub-boxs-snapshot）用这个名字，会互相覆盖
-              NORMALIZED="25.12-snapshot"
-              ;;
-            *)
-              NORMALIZED="$LUCI_VERSION"
-              ;;
-          esac
-          echo "luci_version=$LUCI_VERSION"
-          echo "normalized=$NORMALIZED"
-          echo "NORMALIZED=$NORMALIZED" >> $GITHUB_ENV
 
       - name: 处理是否替换 banner 信息
         if: ${{ github.event.inputs.skip_imagebuilder == 'false' && github.event.inputs.replace_banner == 'true' }}
@@ -275,12 +256,6 @@ jobs:
           profiles="generic"
           include_docker="${{ github.event.inputs.include_docker }}"
           rootfs_partsize="${{ github.event.inputs.rootfs_partsize }}"
-          # IMAGE_TAG 必须在本步骤内解析：$GITHUB_ENV 写入的变量只对后续步骤生效，
-          # 不会导出进当前 shell，跨步骤直接引用会得到空值（docker: invalid reference format）
-          case "${{ github.event.inputs.luci_version }}" in
-            25.12-SNAPSHOT) IMAGE_TAG="armsr-armv8-25.12-SNAPSHOT" ;;
-            *)              IMAGE_TAG="armsr-armv8-openwrt-${{ github.event.inputs.luci_version }}" ;;
-          esac
           echo "使用镜像: immortalwrt/imagebuilder:${IMAGE_TAG}"
 
           IFS=',' read -r -a profile_array <<< "$profiles"
@@ -308,7 +283,7 @@ jobs:
           echo "📦 正在下载预构建 rootfs"
           CUSTOM_ROOTFS_URL="${{ github.event.inputs.custom_rootfs_url }}"
           if [ -z "$CUSTOM_ROOTFS_URL" ]; then
-            echo "❌ 25.12.x 暂无内置默认 rootfs 链接，请填写 custom_rootfs_url"
+            echo "❌ 快照暂无内置默认 rootfs 链接，请填写 custom_rootfs_url"
             exit 1
           fi
           echo "PREBUILT_NAME_PREFIX=custom-wrt" >> $GITHUB_ENV
@@ -344,7 +319,6 @@ jobs:
         id: rename
         run: |
           MODEL=${{ inputs.openwrt_board }}
-          LUCI_VERSION="${{ github.event.inputs.luci_version }}"
 
           for FILE in ${{ env.PACKAGED_OUTPUTPATH }}/*.img.gz; do
             echo "Processing file: $FILE"
@@ -370,8 +344,8 @@ jobs:
       - name: Upload firmware to GitHub Releases
         uses: softprops/action-gh-release@v2.2.1
         with:
-          tag_name: ActionsAutoBuild-ophub-25.12
-          name: ImmortalWrt Boxs 25.12
+          tag_name: ActionsAutoBuild-ophub-snapshot
+          name: ImmortalWrt Boxs snapshot
           body_path: ${{ github.workspace }}/armsr-armv8/box.md
           files: |
             ${{ env.PACKAGED_OUTPUTPATH }}/*.img.gz
