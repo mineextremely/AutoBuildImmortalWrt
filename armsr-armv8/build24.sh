@@ -33,8 +33,12 @@ PACKAGES="$PACKAGES openssh-sftp-server"
 
 add_docker_if_enabled
 
-# 斐讯N1 无线
-PACKAGES="$PACKAGES kmod-brcmfmac wpad-basic-mbedtls iw iwinfo"
+# 无线：kmod-brcmfmac 是斐讯N1 的 Broadcom 驱动，ophub 盒子流程不需要。
+# FLOW 未设置时默认保留，避免将来新增流程漏配时静默丢掉驱动。
+PACKAGES="$PACKAGES wpad-basic-mbedtls iw iwinfo"
+if [ "$FLOW" != "ophub" ]; then
+    PACKAGES="$PACKAGES kmod-brcmfmac"
+fi
 PACKAGES="$PACKAGES perlbase-base perlbase-file perlbase-time perlbase-utf8 perlbase-xsloader"
 # 晶晨宝盒（追加第三方必备软件 用于写入emmc 请不要注释）
 CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-amlogic luci-i18n-amlogic-zh-cn"

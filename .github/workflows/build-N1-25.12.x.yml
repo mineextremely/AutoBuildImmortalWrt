@@ -137,6 +137,7 @@ jobs:
               -e PROFILE=$profile \
               -e INCLUDE_DOCKER=$include_docker \
               -e ROOTFS_PARTSIZE=$rootfs_partsize \
+              -e FLOW=n1 \
               immortalwrt/imagebuilder:${IMAGE_TAG} /bin/bash /home/build/immortalwrt/build.sh
           done
 
