@@ -19,7 +19,7 @@ else
 fi
 
 # 25.12.x 仅使用官方仓库软件包，不注入第三方 run/ipk 包
-PACKAGES=""
+PACKAGES="$PACKAGES kmod-phy-realtek -kmod-mdio-bcm-unimac -kmod-phylib-broadcom -kmod-phy-bcm7xxx -kmod-bcmgenet -kmod-mdio-devres -kmod-phylink -kmod-pcs-xpcs -kmod-stmmac-core -kmod-dwmac-imx -kmod-mdio-bus-mux -kmod-dwmac-sun8i -kmod-e1000e kmod-usb3 "
 PACKAGES="$PACKAGES curl fdisk"
 PACKAGES="$PACKAGES luci-i18n-diskman-zh-cn"
 PACKAGES="$PACKAGES luci-i18n-package-manager-zh-cn"
