@@ -41,7 +41,7 @@ PACKAGES="$PACKAGES kmod-mt7921u kmod-phy-realtek wpad-basic-mbedtls iwinfo iw-f
 if [ "$FLOW" != "ophub" ]; then
     PACKAGES="$PACKAGES kmod-brcmfmac"
 fi
-PACKAGES="$PACKAGES perlbase-base perlbase-file perlbase-time perlbase-utf8 perlbase-xsloader"
+PACKAGES="$PACKAGES luci luci-i18n-base-zh-cn perlbase-base perlbase-file perlbase-time perlbase-utf8 perlbase-xsloader"
 
 # 精简 ImageBuilder 出厂产物：qcow2/vmdk/ext4/cpio/initramfs 在本流程中无人消费。
 # N1 与 ophub 两个 workflow 都只取 *rootfs.tar.gz，.img.gz 由 ophub action 另行合成；
